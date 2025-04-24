@@ -32,43 +32,23 @@ class Index extends Backend
         if (!$menus) {
             $this->error(__('No background menu, please contact super administrator!'));
         }
-        $this->success('', [
-            'adminInfo'  => $adminInfo,
-            'menus'      => $menus,
-            'siteConfig' => [
-                'siteName'     => get_sys_config('site_name'),
-                'version'      => get_sys_config('version'),
-                'apiUrl'       => Config::get('buildadmin.api_url'),
-                'upload'       => keys_to_camel_case(get_upload_config(), ['max_size', 'save_name', 'allowed_suffixes', 'allowed_mime_types']),
-                'cdnUrl'       => full_url(),
-                'cdnUrlParams' => Config::get('buildadmin.cdn_url_params'),
-            ],
-            'terminal'   => [
-                'phpDevelopmentServer' => str_contains($_SERVER['SERVER_SOFTWARE'], 'Development Server'),
-                'npmPackageManager'    => Config::get('terminal.npm_package_manager'),
-            ],
-            'badoucms' => [
-                'version' => config('badoucms.version'),
-                'apiUrl' => config('badoucms.api_url'),
-                'isUpdate' => false
-            ]
+        $this->success('', '', [
+
         ]);
     }
 
     /**
      * 管理员登录
-     * @return void
      * @throws Throwable
      */
-    public function login(): void
+    public function login(): mixed
     {
+        $url = $this->request->get('url', '', 'clean_xss');
+        $url = $url ?: 'index/index';
         // 检查登录态
         if ($this->auth->isLogin()) {
-            $this->success(__('You have already logged in. There is no need to log in again~'), [
-                'type' => $this->auth::LOGGED_IN
-            ], $this->auth::LOGIN_RESPONSE_CODE);
+            $this->success(__('You have already logged in. There is no need to log in again~'), $url);
         }
-
         $captchaSwitch = Config::get('buildadmin.admin_login_captcha');
 
         // 检查提交
@@ -108,7 +88,7 @@ class Index extends Backend
 
             $res = $this->auth->login($username, $password, (bool)$keep);
             if ($res === true) {
-                $this->success(__('Login succeeded!'), [
+                $this->success(__('Login succeeded!'), '', [
                     'userInfo' => $this->auth->getInfo()
                 ]);
             } else {
@@ -118,9 +98,12 @@ class Index extends Backend
             }
         }
 
-        $this->success('', [
-            'captcha' => $captchaSwitch
-        ]);
+        // $this->success('', '', [
+        //     'captcha' => $captchaSwitch
+        // ]);
+
+        $this->view->assign('title', __('Login'));
+        return $this->view->fetch();
     }
 
     /**

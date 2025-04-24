@@ -116,7 +116,6 @@ class User extends Base
             $this->success(__('You\'ve logged in, do not login again'), $url ?: url('/user/index'));
         }
 
-
         //判断来源
         $referer = $this->request->server('HTTP_REFERER', '', 'url_clean');
         if (!$url && $referer && !preg_match("/(user\/login|user\/register|user\/logout)/i", $referer)) {

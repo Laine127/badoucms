@@ -17,7 +17,7 @@ trait Jump
      * @param  array $header 发送的Header信息
      * @return void
      */
-    protected function success($msg = '', string $url = null, $data = '', int $wait = 3, array $header = [])
+    protected function success($msg = '', ?string $url = null, $data = '', int $wait = 3, array $header = [])
     {
         if (is_null($url) && isset($_SERVER["HTTP_REFERER"])) {
             $url = $_SERVER["HTTP_REFERER"];
@@ -56,7 +56,7 @@ trait Jump
      * @param  array $header 发送的Header信息
      * @return void
      */
-    protected function error($msg = '', string $url = null, $data = '', int $wait = 3, array $header = [])
+    protected function error($msg = '', ?string $url = null, $data = '', int $wait = 3, array $header = [])
     {
         if (is_null($url)) {
             $url = $this->request->isAjax() ? '' : 'javascript:history.back(-1);';
@@ -120,6 +120,7 @@ trait Jump
      */
     protected function redirect($url, $code = 302, $with = [])
     {
+
         $response = Response::create($url, 'redirect');
 
         $response->code($code)->with($with);

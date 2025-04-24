@@ -1,0 +1,119 @@
+.login {
+  position: absolute;
+  top: 0;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+  .login-box {
+    overflow: hidden;
+    width: 430px;
+    padding: 0;
+    background: var(--ba-bg-color-overlay);
+    margin-bottom: 80px;
+  }
+  .head {
+    background: #ccccff;
+    img {
+      display: block;
+      width: 430px;
+      margin: 0 auto;
+      user-select: none;
+    }
+  }
+  .form {
+    position: relative;
+    .profile-avatar {
+      display: block;
+      position: absolute;
+      height: 100px;
+      width: 100px;
+      border-radius: 50%;
+      border: 4px solid var(--ba-bg-color-overlay);
+      top: -50px;
+      right: calc(50% - 50px);
+      z-index: 2;
+      user-select: none;
+    }
+    .content {
+      padding: 100px 40px 40px 40px;
+    }
+    .submit-button {
+      width: 100%;
+      letter-spacing: 2px;
+      font-weight: 300;
+      margin-top: 15px;
+      --el-button-bg-color: var(--el-color-primary);
+    }
+  }
+}
+.el-menu {
+  .el-sub-menu .el-menu {
+    background-color: #191a1f !important;
+  }
+  .el-menu-item {
+    &.is-active {
+      color: #fff !important;
+      .icon {
+        color: #fff !important;
+      }
+    }
+    &:hover {
+      background-color: #353940 !important;
+      color: #ffffff !important;
+      icon {
+        color: #fff !important;
+      }
+    }
+  }
+  .el-sub-menu__title:hover {
+    background-color: #353940 !important;
+    color: #ffffff !important;
+  }
+  .icon {
+    font-size: 14px !important;
+  }
+}
+.el-button {
+  padding: 6px 12px;
+}
+
+.table-com-search {
+  margin-bottom: 10px;
+}
+.bd-right-full-dialog {
+  position: absolute;
+  right: 0 !important;
+  margin: 0;
+  height: calc(100vh);
+  width: calc(100vw - 230px) !important;
+  .el-dialog__body {
+    height: auto !important;
+  }
+  .el-tabs {
+    margin-top: 10px;
+    .el-tab-pane {
+      height: calc(100vh - 180px);
+      overflow-y: auto;
+    }
+    .ba-operate-form {
+      padding-top: 10px;
+    }
+  }
+}
+.el-dialog {
+  padding-bottom: 60px !important;
+}
+.el-dialog__footer {
+  background-color: #fff;
+}
+html.dark {
+  .el-dialog__footer {
+    background: none !important;
+  }
+}
+.dark .ba-editor {
+  background: #fff !important;
+  --w-e-textarea-bg-color: #fff !important;
+}

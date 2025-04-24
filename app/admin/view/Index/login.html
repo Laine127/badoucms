@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {include file="common/meta" /}
+  </head>
+  <body>
+    <div id="app">
+      <div class="switch-language">
+        <el-dropdown
+          size="large"
+          :hide-timeout="50"
+          placement="bottom-end"
+          :hide-on-click="true"
+        >
+          <Icon
+            name="fa fa-globe"
+            color="var(--el-text-color-secondary)"
+            size="28"
+          />
+          <template #dropdown>
+            <el-dropdown-menu class="chang-lang">
+              <el-dropdown-item
+                v-for="item in config.lang.langArray"
+                :key="item.name"
+                @click="editDefaultLang(item.name)"
+              >
+                {{ item.value }}
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
+      <div @contextmenu.stop="" id="bubble" class="bubble">
+        <canvas id="bubble-canvas" class="bubble-canvas"></canvas>
+      </div>
+      <div class="login">
+        <div class="login-box">
+          <div class="head">
+            <img src="~assets/login-header.png" alt="" />
+          </div>
+          <div class="form">
+            <img
+              class="profile-avatar"
+              src="{:full_url('/static/images/avatar.png')}"
+              alt=""
+            />
+            <div class="content">
+              <el-form
+                @keyup.enter="onSubmitPre()"
+                ref="formRef"
+                :rules="rules"
+                size="large"
+                :model="form"
+              >
+                <el-form-item prop="username">
+                  <el-input
+                    ref="usernameRef"
+                    type="text"
+                    clearable
+                    v-model="form.username"
+                    placeholder="{:__('Please enter an account')}"
+                  >
+                    <template #prefix>
+                      <Icon
+                        name="fa fa-user"
+                        class="form-item-icon"
+                        size="16"
+                        color="var(--el-input-icon-color)"
+                      />
+                    </template>
+                  </el-input>
+                </el-form-item>
+                <el-form-item prop="password">
+                  <el-input
+                    ref="passwordRef"
+                    v-model="form.password"
+                    type="password"
+                    placeholder="{:__('Please input a password')}"
+                    show-password
+                  >
+                    <template #prefix>
+                      <Icon
+                        name="fa fa-unlock-alt"
+                        class="form-item-icon"
+                        size="16"
+                        color="var(--el-input-icon-color)"
+                      />
+                    </template>
+                  </el-input>
+                </el-form-item>
+                <el-checkbox
+                  v-model="form.keep"
+                  label="{:__('Hold session')}"
+                  size="default"
+                ></el-checkbox>
+                <el-form-item>
+                  <el-button
+                    :loading="state.submitLoading"
+                    class="submit-button"
+                    round
+                    type="primary"
+                    size="large"
+                    @click="onSubmitPre()"
+                  >
+                    {:__('Login')}
+                  </el-button>
+                </el-form-item>
+              </el-form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const App = {
+        setup() {
+          const formRef = ref("");
+          const state = reactive({
+            showCaptcha: false,
+            submitLoading: false,
+          });
+          const form = reactive({
+            username: "",
+            password: "",
+            keep: false,
+            captchaId: shortUuid(),
+            captchaInfo: "",
+          });
+          // 表单验证规则
+          const rules = reactive({
+            username: [
+              valid.buildValidatorData({
+                name: "required",
+                message: __("login.Please enter an account"),
+              }),
+              valid.buildValidatorData({ name: "account" }),
+            ],
+            password: [
+              valid.buildValidatorData({
+                name: "required",
+                message: __("login.Please input a password"),
+              }),
+              valid.buildValidatorData({ name: "password" }),
+            ],
+          });
+
+          const onSubmitPre = () => {
+            console.log(formRef.value);
+
+            formRef.value?.validate((valid) => {
+              if (valid) {
+                onSubmit();
+              }
+            });
+          };
+
+          const onSubmit = () => {
+            state.submitLoading = true;
+            createAxios({
+                url:'login',
+                data:form,
+                method:'post',
+            })
+                .then((res) => { adminInfo.dataFill(res.data.userInfo);})
+                .finally(() => {
+                    state.submitLoading = false;
+                });
+          };
+
+          return {
+            formRef,
+            state,
+            form,
+            rules,
+            onSubmitPre,
+            fullUrl: window.fullUrl,
+          };
+        },
+      };
+
+      const app = Vue.createApp(App);
+      app.use(ElementPlus);
+      app.mount("#app");
+    </script>
+  </body>
+</html>

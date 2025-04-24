@@ -1,0 +1,29 @@
+<meta charset="utf-8">
+<title>{$title|default=''}</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="renderer" content="webkit">
+<meta name="referrer" content="never">
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="shortcut icon" href="/favicon.ico" />
+<script src="__CDN__/static/js/vue.global.min.js"></script>
+<script src="__CDN__/static/element-plus/index.js"></script>
+<script src="__CDN__/static/admin/js/validate.js"></script>
+<script src="__CDN__/static/js/axios.min.js"></script>
+<script src="__CDN__/static/admin/js/http.js"></script>
+
+<link href="__CDN__/static/element-plus/index.min.css" rel="stylesheet">
+<link href="__CDN__/static/admin/css/app.min.css" rel="stylesheet">
+<link href="__CDN__/static/admin/css/badou.min.css" rel="stylesheet">
+
+{if $Think.config.fastadmin.adminskin}
+<link href="__CDN__/assets/css/skins/{$Think.config.fastadmin.adminskin}.css?v={$Think.config.site.version}" rel="stylesheet">
+{/if}
+
+<script type="text/javascript">
+   window.Config = {$config|default=""|raw|json_encode};
+</script>
+<script src="__CDN__/static/js/common.js"></script>
+<script>
+  const { createApp, reactive, ref } = Vue
+</script>

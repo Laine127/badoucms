@@ -1,0 +1,8 @@
+const App = {
+    template: `
+
+    `,
+    setup() {
+
+    }
+}

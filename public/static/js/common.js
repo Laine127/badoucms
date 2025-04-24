@@ -5,6 +5,10 @@
     document.head.appendChild(oscript) // 改为添加到head中以提高优先级
 })();
 
+var Badou = {
+
+}
+
 function lang(data) {
     window.Lang = data
 }
@@ -144,3 +148,22 @@ function refreshCaptcha($img) {
     $img.attr("src", `${captchaUrl}?id=${captchaId}`);
 }
 
+/**
+ * 获取资源完整地址
+ * @param relativeUrl 资源相对地址
+ * @param domain 指定域名
+ */
+function fullUrl(relativeUrl, domain = '') {
+    // const siteConfig = useSiteConfig()
+    // if (!domain) {
+    //     domain = siteConfig.cdnUrl ? siteConfig.cdnUrl : getUrl()
+    // }
+    // if (!relativeUrl) return domain
+
+    // const regUrl = new RegExp(/^http(s)?:\/\//)
+    // const regexImg = new RegExp(/^((?:[a-z]+:)?\/\/|data:image\/)(.*)/i)
+    // if (!domain || regUrl.test(relativeUrl) || regexImg.test(relativeUrl)) {
+    //     return relativeUrl
+    // }
+    return domain + relativeUrl
+}

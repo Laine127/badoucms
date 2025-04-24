@@ -2,19 +2,27 @@
 
 namespace app\common\controller;
 
+use bd\Jump;
 use Throwable;
 use think\Model;
+use think\facade\View;
+use app\BaseController;
 use think\facade\Event;
+use think\facade\Config;
+use think\facade\Session;
 use app\admin\library\Auth;
 use app\common\library\token\TokenExpirationException;
 
-class Backend extends Api
+class Backend extends BaseController
 {
     /**
      * 引入traits
      * traits内实现了index、add、edit等方法
      */
     use \app\admin\library\traits\Backend;
+    use \bd\BackendExt;
+    use Jump;
+
     /**
      * 无需登录的方法，访问本控制器的此方法，无需管理员登录
      * @var array
@@ -128,17 +136,26 @@ class Backend extends Api
     protected string|array $indexField = ['*'];
 
     /**
+     * 视图实例
+     *
+     * @var \think\View
+     */
+    protected object $view;
+
+    /**
      * 初始化
      * @throws Throwable
      */
     public function initialize(): void
     {
         parent::initialize();
-
+        $this->view = View::instance();
+        $this->view->config([
+            'view_dir_name' => 'view',
+        ]);
         $needLogin = !action_in_arr($this->noNeedLogin);
 
         try {
-
             // 初始化管理员鉴权实例
             $this->auth = Auth::instance();
             $token      = get_auth_token();
@@ -147,15 +164,19 @@ class Backend extends Api
             }
         } catch (TokenExpirationException) {
             if ($needLogin) {
-                $this->error(__('Token expiration'), [], 409);
+                $this->error(__('Token expiration'));
             }
         }
 
         if ($needLogin) {
             if (!$this->auth->isLogin()) {
-                $this->error(__('Please login first'), [
-                    'type' => $this->auth::NEED_LOGIN
-                ], $this->auth::LOGIN_RESPONSE_CODE);
+                $url = Session::get('referer');
+                $url = $url ? $url : $this->request->url();
+                if (in_array($this->request->pathinfo(), ['/', 'index/index'])) {
+                    $this->redirect((string)url('index/login', ['referer' => $url]), 302);
+                    exit;
+                }
+                $this->error(__('Please login first'), url('index/login', ['url' => $url]));
             }
             if (!action_in_arr($this->noNeedPermission)) {
                 $routePath = ($this->app->request->controllerPath ?? '') . '/' . $this->request->action(true);
@@ -164,9 +185,42 @@ class Backend extends Api
                 }
             }
         }
+        // 语言检测
+        $langSet = $this->app->lang->getLangSet();
+        $langSet = preg_match("/^([a-zA-Z\-_]{2,10})\$/i", $langSet) ? $langSet : 'zh-cn';
 
+        $controllername = strtolower($this->request->controller());
+        $actionname = strtolower($this->request->action());
+        $config = [
+            'app' => $this->app->http->getName(),
+            'controllername' => $controllername,
+            'actionname'     => $actionname,
+            'app_url'        => $this->request->root(true),
+            'siteConfig' => [
+                'siteName'     => get_sys_config('site_name'),
+                'upload'       => keys_to_camel_case(get_upload_config(), ['max_size', 'save_name', 'allowed_suffixes', 'allowed_mime_types']),
+                'cdnUrl'       => full_url(),
+                'cdnUrlParams' => Config::get('buildadmin.cdn_url_params'),
+            ],
+            'badoucms' => [
+                'version' => config('badoucms.version'),
+                'apiUrl' => config('badoucms.api_url'),
+                'isUpdate' => false
+            ]
+        ];
+        //渲染配置信息
+        $this->view->assign('config', $config);
+        //加载当前控制器语言包
+        $this->loadlang($langSet);
         // 管理员验权和登录标签位
         Event::trigger('backendInit', $this->auth);
+    }
+
+    protected function loadlang($langSet)
+    {
+        $this->app->lang->load([
+            app_path() . 'lang' . DIRECTORY_SEPARATOR . $langSet . DIRECTORY_SEPARATOR . (str_replace('/', DIRECTORY_SEPARATOR, $this->app->request->controllerPath)) . '.php',
+        ]);
     }
 
     /**
@@ -379,5 +433,15 @@ class Backend extends Api
         ];
 
         return $alias[$operator] ?? $operator;
+    }
+
+    /**
+     * 渲染配置信息
+     * @param mixed $name  键名或数组
+     * @param mixed $value 值
+     */
+    protected function assignconfig($name, $value = '')
+    {
+        $this->view->config = array_merge($this->view->config ? $this->view->config : [], is_array($name) ? $name : [$name => $value]);
     }
 }
