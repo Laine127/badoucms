@@ -6,7 +6,12 @@
 <meta name="robots" content="noindex, nofollow">
 
 <link rel="shortcut icon" href="/favicon.ico" />
+<script type="text/javascript">
+  window.Config = {$config|default=""|raw|json_encode};
+</script>
 <script src="__CDN__/static/js/vue.global.min.js"></script>
+<script src="__CDN__/static/admin/js/lang.js"></script>
+
 <script src="__CDN__/static/element-plus/index.js"></script>
 <script src="__CDN__/static/admin/js/validate.js"></script>
 <script src="__CDN__/static/js/axios.min.js"></script>
@@ -19,11 +24,7 @@
 {if $Think.config.fastadmin.adminskin}
 <link href="__CDN__/assets/css/skins/{$Think.config.fastadmin.adminskin}.css?v={$Think.config.site.version}" rel="stylesheet">
 {/if}
-
-<script type="text/javascript">
-   window.Config = {$config|default=""|raw|json_encode};
-</script>
-<script src="__CDN__/static/js/common.js"></script>
+<script src="__CDN__/static/admin/js/app.js"></script>
 <script>
   const { createApp, reactive, ref } = Vue
 </script>

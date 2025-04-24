@@ -112,75 +112,81 @@
       </div>
     </div>
     <script>
-      const App = {
+        const App = {
         setup() {
-          const formRef = ref("");
-          const state = reactive({
-            showCaptcha: false,
-            submitLoading: false,
-          });
-          const form = reactive({
-            username: "",
-            password: "",
-            keep: false,
-            captchaId: shortUuid(),
-            captchaInfo: "",
-          });
-          // 表单验证规则
-          const rules = reactive({
-            username: [
-              valid.buildValidatorData({
-                name: "required",
-                message: __("login.Please enter an account"),
-              }),
-              valid.buildValidatorData({ name: "account" }),
-            ],
-            password: [
-              valid.buildValidatorData({
-                name: "required",
-                message: __("login.Please input a password"),
-              }),
-              valid.buildValidatorData({ name: "password" }),
-            ],
-          });
-
-          const onSubmitPre = () => {
-            console.log(formRef.value);
-
-            formRef.value?.validate((valid) => {
-              if (valid) {
-                onSubmit();
-              }
+            const formRef = ref("");
+            const state = reactive({
+                showCaptcha: false,
+                submitLoading: false,
             });
-          };
 
-          const onSubmit = () => {
-            state.submitLoading = true;
-            createAxios({
-                url:'login',
-                data:form,
-                method:'post',
+            const form = reactive({
+                username: "",
+                password: "",
+                keep: false,
+                captchaId: shortUuid(),
+                captchaInfo: "",
+            });
+
+            const lang=Vue.computed(()=>{
+                return window.Lang
             })
-                .then((res) => { adminInfo.dataFill(res.data.userInfo);})
+
+            // 表单验证规则 - Initialize with placeholders
+            const rules = reactive({
+                username: [
+                    valid.buildValidatorData({
+                        name: "required",
+                        message: __("Please enter an account"), // Placeholder
+                    }),
+                    valid.buildValidatorData({ name: "account" }),
+                ],
+                password: [
+                    valid.buildValidatorData({
+                        name: "required",
+                        message: __("Please input a password"), // Placeholder
+                    }),
+                    valid.buildValidatorData({ name: "password" }),
+                ],
+            });
+
+            const onSubmitPre = () => {
+                formRef.value?.validate((valid) => {
+                    if (valid) {
+                        onSubmit();
+                    }
+                });
+            };
+
+            const onSubmit = () => {
+                state.submitLoading = true;
+                createAxios({
+                    url:'index/login',
+                    data:form,
+                    method:'post',
+                })
+                .then((res) => {
+                    console.log(res);
+
+                })
                 .finally(() => {
                     state.submitLoading = false;
                 });
-          };
+            };
 
-          return {
-            formRef,
-            state,
-            form,
-            rules,
-            onSubmitPre,
-            fullUrl: window.fullUrl,
-          };
+            return {
+                formRef,
+                state,
+                form,
+                rules,
+                onSubmitPre,
+            };
         },
-      };
+        };
 
-      const app = Vue.createApp(App);
-      app.use(ElementPlus);
-      app.mount("#app");
+        const app = Vue.createApp(App);
+        app.use(ElementPlus);
+        app.mount("#app");
     </script>
   </body>
 </html>

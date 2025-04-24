@@ -172,7 +172,7 @@ class Backend extends BaseController
             if (!$this->auth->isLogin()) {
                 $url = Session::get('referer');
                 $url = $url ? $url : $this->request->url();
-                if (in_array($this->request->pathinfo(), ['/', 'index/index'])) {
+                if (in_array($this->request->pathinfo(), ['','/', 'index/index'])) {
                     $this->redirect((string)url('index/login', ['referer' => $url]), 302);
                     exit;
                 }
@@ -196,6 +196,7 @@ class Backend extends BaseController
             'controllername' => $controllername,
             'actionname'     => $actionname,
             'app_url'        => $this->request->root(true),
+            'language'       => $langSet,
             'siteConfig' => [
                 'siteName'     => get_sys_config('site_name'),
                 'upload'       => keys_to_camel_case(get_upload_config(), ['max_size', 'save_name', 'allowed_suffixes', 'allowed_mime_types']),
@@ -211,16 +212,23 @@ class Backend extends BaseController
         //渲染配置信息
         $this->view->assign('config', $config);
         //加载当前控制器语言包
-        $this->loadlang($langSet);
+        $this->loadlang($controllername, $langSet);
         // 管理员验权和登录标签位
         Event::trigger('backendInit', $this->auth);
     }
 
-    protected function loadlang($langSet)
+    /**
+     * 加载语言文件
+     * @param string $name
+     */
+    protected function loadlang($name, $lang)
     {
-        $this->app->lang->load([
-            app_path() . 'lang' . DIRECTORY_SEPARATOR . $langSet . DIRECTORY_SEPARATOR . (str_replace('/', DIRECTORY_SEPARATOR, $this->app->request->controllerPath)) . '.php',
+        $name = preg_match("/^([a-zA-Z0-9_\.\/]+)\$/i", $name) ? $name : 'index';
+        $lang = preg_match("/^([a-zA-Z\-_]{2,10})\$/i", $lang) ? $lang : 'zh-cn';
+        $langArr = $this->app->lang->load([
+            app_path() . 'lang' . DIRECTORY_SEPARATOR . $lang . DIRECTORY_SEPARATOR . (str_replace('/', DIRECTORY_SEPARATOR, $name)) . '.php',
         ]);
+        $this->assignconfig('lang', $langArr);
     }
 
     /**

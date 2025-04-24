@@ -7,6 +7,8 @@ use ba\Terminal;
 use think\Response;
 use ba\TableManager;
 use think\facade\Db;
+use think\facade\Env;
+use think\facade\Lang;
 use think\facade\Cache;
 use think\facade\Event;
 use app\admin\model\AdminLog;
@@ -21,11 +23,33 @@ class Ajax extends Backend
      * 无需登录的方法
      * terminal 内部自带验权
      */
-    protected array $noNeedLogin = ['terminal'];
+    protected array $noNeedLogin = ['lang'];
 
     public function initialize(): void
     {
         parent::initialize();
+    }
+
+    public function lang()
+    {
+        $this->request->get(['callback' => 'lang']);
+        $header = ['Content-Type' => 'application/javascript'];
+        if (!Env::get('app_debug')) {
+            $offset = 30 * 60 * 60 * 24; // 缓存一个月
+            $header['Cache-Control'] = 'public';
+            $header['Pragma'] = 'cache';
+            $header['Expires'] = gmdate("D, d M Y H:i:s", time() + $offset) . " GMT";
+        }
+        $lang = $this->request->get('lang');
+        $controllername = $this->request->get('controllername');
+        if (!$lang || !in_array($lang, config('lang.allow_lang_list')) || !$controllername || !preg_match("/^[a-z0-9_\.]+$/i", $controllername)) {
+
+            return jsonp(['errmsg' => '参数错误'], 200, [], ['json_encode_param' => JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE]);
+        }
+        $controllername = input("controllername");
+        $this->loadlang($controllername, $lang);
+        //强制输出JSON Object
+        return jsonp(Lang::get(), 200, $header, ['json_encode_param' => JSON_FORCE_OBJECT | JSON_UNESCAPED_UNICODE]);
     }
 
     public function upload(): void
@@ -46,7 +70,7 @@ class Ajax extends Backend
             $this->error($e->getMessage());
         }
 
-        $this->success(__('File uploaded successfully'), [
+        $this->success(__('File uploaded successfully'), '', [
             'file' => $attachment ?? []
         ]);
     }
@@ -206,14 +230,5 @@ class Ajax extends Backend
         }
         Event::trigger('cacheClearAfter', $this->app);
         $this->success(__('Cache cleaned~'));
-    }
-
-    /**
-     * 终端
-     * @throws Throwable
-     */
-    public function terminal(): void
-    {
-        (new Terminal())->exec();
     }
 }

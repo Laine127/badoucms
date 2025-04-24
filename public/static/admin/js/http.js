@@ -18,7 +18,7 @@ var userTokenRefreshKey = 'ba-user-token-refresh'
  */
 function createAxios(axiosConfig, options, loading) {
     const Axios = axios.create({
-        baseURL: getUrl(),
+        baseURL: Config.app_url,
         timeout: 1000 * 10,
         headers: {
             'think-lang': 'zh-cn',

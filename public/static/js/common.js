@@ -5,10 +5,6 @@
     document.head.appendChild(oscript) // 改为添加到head中以提高优先级
 })();
 
-var Badou = {
-
-}
-
 function lang(data) {
     window.Lang = data
 }
