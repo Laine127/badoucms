@@ -1,5 +1,5 @@
 <div id="aside">
-    <el-aside v-if="!navTabs.state.tabFullScreen" :class="'layout-aside-' + config.layout.layoutMode + ' ' + (config.layout.shrink ? 'shrink' : '')">
+    <el-aside v-if="!navTabs.state.tabFullScreen" :class="'layout-aside-' + config.layout.layoutMode + ' ' + (config.layout.shrink ? 'shrink' : '')" :style="'width: ' + config.menuWidth()">
 
         <Logo v-if="config.layout.menuShowTopBar" ></Logo>
 
@@ -22,7 +22,6 @@
                 }
             })
 
-            document.documentElement.style.setProperty('--menu-width', config.layout.menuWidth + 'px');
             const value = config.layout.layoutMode != "Streamline" ? config.getColorVal("menuTopBarBackground") :"transparent";
             document.documentElement.style.setProperty('--menu-topbar-background', value);
             return {

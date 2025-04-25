@@ -11,28 +11,23 @@
     const MenuVertical = {
         name: 'MenuVertical',
         props: {
-            config: {
-                type: Object,
-                required: true
-            },
-            navTabs: {
-                type: Object,
-                required: true
-            },
             route: {
                 type: Object,
             }
         },
         setup(props) {
+            const config = useConfig();
+            const navTabs = useNavTabs();
+
             const state = reactive({
                 defaultActive: ''
             });
             const verticalMenusScrollbarHeight = computed(() => {
                 let menuTopBarHeight = 0;
-                if (props.config.layout.menuShowTopBar) {
+                if (config.layout.menuShowTopBar) {
                     menuTopBarHeight = 50;
                 }
-                if (props.config.layout.layoutMode == 'Default') {
+                if (config.layout.layoutMode == 'Default') {
                     return `calc(100vh - ${32 + menuTopBarHeight}px)`;
                 } else {
                     return `calc(100vh - ${menuTopBarHeight}px)`;
@@ -40,7 +35,7 @@
             });
 
             const currentRouteActive = (currentRoute) => {
-                const tabView = props.navTabs.getTabsViewDataByRoute(currentRoute);
+                const tabView = navTabs.getTabsViewDataByRoute(currentRoute);
 
                 if (tabView) {
                     state.defaultActive = tabView.meta.matched;
@@ -66,7 +61,9 @@
             };
         },
         render() {
-            const { config, navTabs } = this;
+            const config = useConfig();
+            const navTabs = useNavTabs();
+
             return Vue.h(ElScrollbar, {
                 ref: 'layoutMenuScrollbarRef',
                 class: 'vertical-menus-scrollbar',

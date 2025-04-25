@@ -20,13 +20,9 @@
                     level: 1
                 })
             },
-            config: {
-                type: Object,
-            }
         },
         setup(props) {
-            console.log(props);
-
+            const config = useConfig();
             const onClickMenu = (menu) => {
                 if (!menu.path) return;
                 window.location.href = menu.path;
@@ -56,14 +52,13 @@
             };
 
             return {
+                config,
                 onClickMenu,
                 onClickSubMenu
             };
         },
         render() {
             const renderMenus = (menus) => {
-                console.log(menus);
-
                 return menus.map(menu => {
                     if (menu.children && menu.children.length > 0) {
                         return Vue.h(ElSubMenu, {

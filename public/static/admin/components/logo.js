@@ -35,7 +35,7 @@
         setup() {
             const config = useConfig();
             const siteConfig = Config.siteConfig;
-
+            const { Session } = window.Storage;
             const onMenuCollapse = function () {
                 if (config.layout.shrink && !config.layout.menuCollapse) {
                     window.closeShade();
@@ -43,7 +43,7 @@
 
                 config.setLayout('menuCollapse', !config.layout.menuCollapse);
 
-                window.Session.set('BEFORE_RESIZE_LAYOUT', {
+                Session.set('BEFORE_RESIZE_LAYOUT', {
                     layoutMode: config.layout.layoutMode,
                     menuCollapse: config.layout.menuCollapse,
                 });
