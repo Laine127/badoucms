@@ -248,6 +248,7 @@ class Auth extends \ba\Auth
                 Token::set($this->token, self::TOKEN_TYPE, $this->model->id, $this->keepTime);
             }
             $this->model->commit();
+            session('token', $this->token); // 写入session
         } catch (Throwable $e) {
             $this->model->rollback();
             $this->setError($e->getMessage());
@@ -526,6 +527,7 @@ class Auth extends \ba\Auth
         $this->refreshToken = '';
         $this->setError('');
         $this->setKeepTime((int)Config::get('buildadmin.admin_token_keep_time'));
+        session('token', $this->token); // 写入session
         return true;
     }
 }

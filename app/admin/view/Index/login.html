@@ -113,79 +113,80 @@
     </div>
     <script>
         const App = {
-        setup() {
-            const formRef = ref("");
-            const state = reactive({
-                showCaptcha: false,
-                submitLoading: false,
-            });
+          setup() {
+              const formRef = ref("");
+              const adminInfo = useAdminInfo();
+              const state = reactive({
+                  showCaptcha: false,
+                  submitLoading: false,
+              });
 
-            const form = reactive({
-                username: "",
-                password: "",
-                keep: false,
-                captchaId: shortUuid(),
-                captchaInfo: "",
-            });
+              const form = reactive({
+                  username: "",
+                  password: "",
+                  keep: false,
+                  captchaId: shortUuid(),
+                  captchaInfo: "",
+              });
 
-            const lang=Vue.computed(()=>{
-                return window.Lang
-            })
+              // 表单验证规则 - Initialize with placeholders
+              const rules = reactive({
+                  username: [
+                      valid.buildValidatorData({
+                          name: "required",
+                          message: __("Please enter an account"), // Placeholder
+                      }),
+                      valid.buildValidatorData({ name: "account" }),
+                  ],
+                  password: [
+                      valid.buildValidatorData({
+                          name: "required",
+                          message: __("Please input a password"), // Placeholder
+                      }),
+                      valid.buildValidatorData({ name: "password" }),
+                  ],
+              });
 
-            // 表单验证规则 - Initialize with placeholders
-            const rules = reactive({
-                username: [
-                    valid.buildValidatorData({
-                        name: "required",
-                        message: __("Please enter an account"), // Placeholder
-                    }),
-                    valid.buildValidatorData({ name: "account" }),
-                ],
-                password: [
-                    valid.buildValidatorData({
-                        name: "required",
-                        message: __("Please input a password"), // Placeholder
-                    }),
-                    valid.buildValidatorData({ name: "password" }),
-                ],
-            });
+              const onSubmitPre = () => {
+                  formRef.value?.validate((valid) => {
+                      if (valid) {
+                          onSubmit();
+                      }
+                  });
+              };
 
-            const onSubmitPre = () => {
-                formRef.value?.validate((valid) => {
-                    if (valid) {
-                        onSubmit();
-                    }
-                });
-            };
+              const onSubmit = () => {
+                  state.submitLoading = true;
+                  createAxios({
+                      url:'index/login',
+                      data:form,
+                      method:'post',
+                  })
+                  .then((res) => {
+                      if(res.code==1){
+                        adminInfo.dataFill(res.data.userInfo)
+                        window.location.href = res.url
+                      }
+                  })
+                  .finally(() => {
+                      state.submitLoading = false;
+                  });
+              };
 
-            const onSubmit = () => {
-                state.submitLoading = true;
-                createAxios({
-                    url:'index/login',
-                    data:form,
-                    method:'post',
-                })
-                .then((res) => {
-                    console.log(res);
-
-                })
-                .finally(() => {
-                    state.submitLoading = false;
-                });
-            };
-
-            return {
-                formRef,
-                state,
-                form,
-                rules,
-                onSubmitPre,
-            };
-        },
+              return {
+                  formRef,
+                  state,
+                  form,
+                  rules,
+                  onSubmitPre,
+              };
+          },
         };
+        console.log(window.pinia);
 
         const app = Vue.createApp(App);
         app.use(ElementPlus);
+        app.use(window.pinia);
         app.mount("#app");
     </script>
   </body>

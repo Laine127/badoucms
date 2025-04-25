@@ -32,9 +32,7 @@ class Index extends Backend
         if (!$menus) {
             $this->error(__('No background menu, please contact super administrator!'));
         }
-        $this->success('', '', [
 
-        ]);
     }
 
     /**
@@ -88,7 +86,7 @@ class Index extends Backend
 
             $res = $this->auth->login($username, $password, (bool)$keep);
             if ($res === true) {
-                $this->success(__('Login succeeded!'), '', [
+                $this->success(__('Login succeeded!'), $url, [
                     'userInfo' => $this->auth->getInfo()
                 ]);
             } else {
@@ -112,13 +110,11 @@ class Index extends Backend
      */
     public function logout(): void
     {
-        if ($this->request->isPost()) {
-            $refreshToken = $this->request->post('refreshToken', '');
-            if ($refreshToken) {
-                Token::delete((string)$refreshToken);
-            }
-            $this->auth->logout();
-            $this->success();
+        $refreshToken = $this->request->post('refreshToken', '');
+        if ($refreshToken) {
+            Token::delete((string)$refreshToken);
         }
+        $this->auth->logout();
+        $this->success('退出登录成功！', 'index/login');
     }
 }

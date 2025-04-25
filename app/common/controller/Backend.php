@@ -159,6 +159,9 @@ class Backend extends BaseController
             // 初始化管理员鉴权实例
             $this->auth = Auth::instance();
             $token      = get_auth_token();
+            if (!$token) {
+                $token = Session::get('token');
+            }
             if ($token) {
                 $this->auth->init($token);
             }
@@ -181,7 +184,7 @@ class Backend extends BaseController
             if (!action_in_arr($this->noNeedPermission)) {
                 $routePath = ($this->app->request->controllerPath ?? '') . '/' . $this->request->action(true);
                 if (!$this->auth->check($routePath)) {
-                    $this->error(__('You have no permission'), [], 401);
+                    $this->error(__('You have no permission'));
                 }
             }
         }
