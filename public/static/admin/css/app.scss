@@ -23,6 +23,84 @@ body,
   font-size: var(--el-font-size-base);
 }
 
+:root {
+  --ba-main-space: 16px;
+  --ba-color-primary-light: #3f6ad8;
+  --ba-bg-color: #f5f5f5;
+  --ba-bg-color-overlay: #ffffff;
+  --ba-border-color: #f6f6f6;
+}
+
+.layout-container {
+  height: 100%;
+  width: 100%;
+}
+.content-wrapper {
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+.layout-header {
+  height: auto;
+  padding: 0;
+}
+
+.layout-logo {
+  width: 100%;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: 10px;
+  background: var(--menu-topbar-background);
+}
+.logo-img {
+  width: 28px;
+}
+.website-name {
+  display: block;
+  width: 180px;
+  padding-left: 4px;
+  font-size: var(--el-font-size-extra-large);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.fold {
+  margin-left: auto;
+}
+.unfold {
+  margin: 0 auto;
+}
+
+.layout-aside-Default {
+  background: var(--ba-bg-color-overlay);
+  margin: 16px 0 16px 16px;
+  height: calc(100vh - 32px);
+  box-shadow: var(--el-box-shadow-light);
+  border-radius: var(--el-border-radius-base);
+  overflow: hidden;
+  transition: width 0.3s ease;
+  width: var(--menu-width);
+}
+.layout-aside-Classic,
+.layout-aside-Double {
+  background: var(--ba-bg-color-overlay);
+  margin: 0;
+  height: 100vh;
+  overflow: hidden;
+  transition: width 0.3s ease;
+  width: var(--menu-width);
+}
+.shrink {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999999;
+}
+
 // 阿里 iconfont Symbol引用css
 .iconfont-icon {
   width: 1em;

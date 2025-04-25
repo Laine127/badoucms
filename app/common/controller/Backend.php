@@ -200,6 +200,9 @@ class Backend extends BaseController
             'actionname'     => $actionname,
             'app_url'        => $this->request->root(true),
             'language'       => $langSet,
+            'route' => [
+                'path' => $controllername.'/'.$actionname
+            ],
             'siteConfig' => [
                 'siteName'     => get_sys_config('site_name'),
                 'upload'       => keys_to_camel_case(get_upload_config(), ['max_size', 'save_name', 'allowed_suffixes', 'allowed_mime_types']),

@@ -23,6 +23,8 @@ function createAxios(axiosConfig, options, loading) {
         headers: {
             'think-lang': 'zh-cn',
             server: true,
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
         },
         responseType: 'json',
     })

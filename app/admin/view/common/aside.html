@@ -1,0 +1,46 @@
+<div id="aside">
+    <el-aside v-if="!navTabs.state.tabFullScreen" :class="'layout-aside-' + config.layout.layoutMode + ' ' + (config.layout.shrink ? 'shrink' : '')">
+
+        <Logo v-if="config.layout.menuShowTopBar" ></Logo>
+
+        <menu-vertical :config="config" :nav-tabs="navTabs" :route="route"> </menu-vertical>
+    </el-aside>
+</div>
+
+<script>
+    var Aside={
+        setup(){
+            const navTabs = useNavTabs();
+            const config = useConfig();
+
+            createAxios({
+                url:'index/index',
+                method:'get',
+            }).then(res=>{
+                if (res.code==1) {
+                    navTabs.setTabsViewRoutes(res.data.menus)
+                }
+            })
+
+            document.documentElement.style.setProperty('--menu-width', config.layout.menuWidth + 'px');
+            const value = config.layout.layoutMode != "Streamline" ? config.getColorVal("menuTopBarBackground") :"transparent";
+            document.documentElement.style.setProperty('--menu-topbar-background', value);
+            return {
+                config:config,
+                navTabs:navTabs,
+                route:Config.route
+            }
+        }
+    }
+    const aside = Vue.createApp(Aside);
+    aside.use(ElementPlus);
+    aside.use(window.pinia);
+    aside.component('Svg', Svg);
+    aside.component('Icon', Icon);
+    aside.component('Logo', Logo);
+    aside.component('MenuVerticalChildren', MenuVerticalChildren);
+    aside.component('menu-vertical', MenuVertical);
+    aside.component('menu-tree', MenuTree);
+    aside.component('MenuHorizontal', MenuHorizontal);
+    aside.mount("#aside");
+</script>

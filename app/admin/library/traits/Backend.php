@@ -34,8 +34,12 @@ trait Backend
      * 查看
      * @throws Throwable
      */
-    public function index(): void
+    public function index()
     {
+        if (!$this->request->isAjax()) {
+            return $this->view->fetch();
+        }
+
         if ($this->request->param('select')) {
             $this->select();
         }
@@ -49,7 +53,7 @@ trait Backend
             ->order($order)
             ->paginate($limit);
 
-        $this->success('', [
+        $this->success('', '', [
             'list'   => $res->items(),
             'total'  => $res->total(),
             'remark' => get_route_remark(),

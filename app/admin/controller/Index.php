@@ -19,11 +19,13 @@ class Index extends Backend
 
     /**
      * 后台初始化请求
-     * @return void
      * @throws Throwable
      */
-    public function index(): void
+    public function index()
     {
+        if (!$this->request->isAjax()) {
+            return $this->view->fetch();
+        }
         $adminInfo          = $this->auth->getInfo();
         $adminInfo['super'] = $this->auth->isSuperAdmin();
         unset($adminInfo['token'], $adminInfo['refresh_token']);
@@ -32,7 +34,7 @@ class Index extends Backend
         if (!$menus) {
             $this->error(__('No background menu, please contact super administrator!'));
         }
-
+        $this->success('ok', '', ['menus' => $menus]);
     }
 
     /**
