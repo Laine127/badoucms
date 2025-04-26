@@ -99,6 +99,20 @@ body,
   z-index: 9999999;
 }
 
+.layouts-menu-vertical {
+  border: 0;
+  padding-bottom: 30px;
+}
+
+.el-sub-menu .icon,
+.el-menu-item .icon {
+  vertical-align: middle;
+  margin-right: 5px;
+  width: 24px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
 // 阿里 iconfont Symbol引用css
 .iconfont-icon {
   width: 1em;

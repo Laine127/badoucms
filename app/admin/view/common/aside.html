@@ -2,8 +2,8 @@
     <el-aside v-if="!navTabs.state.tabFullScreen" :class="'layout-aside-' + config.layout.layoutMode + ' ' + (config.layout.shrink ? 'shrink' : '')" :style="'width: ' + config.menuWidth()">
 
         <Logo v-if="config.layout.menuShowTopBar" ></Logo>
+        <menu-vertical :route="route"> </menu-vertical>
 
-        <menu-vertical :config="config" :nav-tabs="navTabs" :route="route"> </menu-vertical>
     </el-aside>
 </div>
 
@@ -34,6 +34,10 @@
     const aside = Vue.createApp(Aside);
     aside.use(ElementPlus);
     aside.use(window.pinia);
+
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+        aside.component(key, component)
+    }
     aside.component('Svg', Svg);
     aside.component('Icon', Icon);
     aside.component('Logo', Logo);

@@ -78,10 +78,14 @@
             });
 
             if (props.name.indexOf('el-icon-') === 0) {
+                // 解析 Element Plus 图标名称
+                const iconName = props.name.replace('el-icon-', '');
+                // 尝试解析组件
+                const IconComponent = resolveComponent(iconName);
                 return () => createVNode('el-icon', {
                     class: 'icon el-icon',
                     style: iconStyle.value
-                }, [createVNode(resolveComponent(props.name))]);
+                }, [createVNode(IconComponent)]);
             } else if (props.name.indexOf('local-') === 0 || isExternal(props.name)) {
                 return () => createVNode(svg, {
                     name: props.name,

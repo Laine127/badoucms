@@ -5,10 +5,27 @@
 })(this, (function (Vue, ElementPlus) {
     'use strict';
 
-    const { ElSubMenu, ElMenuItem } = ElementPlus;
-
     const MenuTree = {
         name: 'MenuTree',
+        template: `
+        <template v-for="menu in menus">
+            <template v-if="menu.children && menu.children.length > 0">
+                <el-sub-menu @click="onClickSubMenu(menu)" :index="menu.path" :key="menu.path">
+                    <template #title>
+                        <Icon :color="config.getColorVal('menuColor')" :name="menu.icon ? menu.icon : config.layout.menuDefaultIcon" />
+                        <span>{{ menu.title ? menu.title : __('noTitle') }}</span>
+                    </template>
+                    <menu-tree :extends="{ ...menuextends, level: menuextends.level + 1 }" :menus="menu.children"></menu-tree>
+                </el-sub-menu>
+            </template>
+            <template v-else>
+                <el-menu-item :index="menu.path" :key="menu.path" @click="onClickMenu(menu)">
+                    <Icon :color="config.getColorVal('menuColor')" :name="menu.icon ? menu.icon : config.layout.menuDefaultIcon" />
+                    <span>{{ menu.title ? menu.title : __('noTitle') }}</span>
+                </el-menu-item>
+            </template>
+        </template>
+        `,
         props: {
             menus: {
                 type: Array,
@@ -23,6 +40,7 @@
         },
         setup(props) {
             const config = useConfig();
+
             const onClickMenu = (menu) => {
                 if (!menu.path) return;
                 window.location.href = menu.path;
@@ -54,52 +72,11 @@
             return {
                 config,
                 onClickMenu,
-                onClickSubMenu
+                onClickSubMenu,
+                // 返回 props 中的值供模板使用
+                menus: props.menus,
+                menuextends: props.extends
             };
-        },
-        render() {
-            const renderMenus = (menus) => {
-                return menus.map(menu => {
-                    if (menu.children && menu.children.length > 0) {
-                        return Vue.h(ElSubMenu, {
-                            index: menu.path,
-                            key: menu.path,
-                            onClick: () => this.onClickSubMenu(menu)
-                        }, {
-                            title: () => [
-                                Vue.h('i', {
-                                    class: ['icon', menu.icon || this.config.layout.menuDefaultIcon],
-                                    style: { color: this.config.getColorVal('menuColor') }
-                                }),
-                                Vue.h('span', {}, menu.title || 'No Title')
-                            ],
-                            default: () => [
-                                Vue.h(MenuTree, {
-                                    extends: { ...this.extends, level: this.extends.level + 1 },
-                                    menus: menu.children,
-                                    config: this.config
-                                })
-                            ]
-                        });
-                    } else {
-                        return Vue.h(ElMenuItem, {
-                            index: menu.path,
-                            key: menu.path,
-                            onClick: () => this.onClickMenu(menu)
-                        }, {
-                            default: () => [
-                                Vue.h('i', {
-                                    class: ['icon', menu.icon || this.config.layout.menuDefaultIcon],
-                                    style: { color: this.config.getColorVal('menuColor') }
-                                }),
-                                Vue.h('span', {}, menu.title || 'No Title')
-                            ]
-                        });
-                    }
-                });
-            };
-
-            return Vue.h('div', {}, renderMenus(this.menus));
         }
     };
 

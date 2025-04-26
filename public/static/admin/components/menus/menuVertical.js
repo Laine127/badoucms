@@ -6,10 +6,28 @@
     'use strict';
 
     const { computed, nextTick, onMounted, reactive } = Vue;
-    const { ElScrollbar, ElMenu } = ElementPlus;
 
     const MenuVertical = {
         name: 'MenuVertical',
+        template: `
+            <el-scrollbar ref="layoutMenuScrollbarRef" :style="{'height': verticalMenusScrollbarHeight, 'backgroundColor': config.getColorVal('menuBackground') }">
+                <el-menu
+                    class="layouts-menu-vertical"
+                    :collapse-transition="false"
+                    :unique-opened="config.layout.menuUniqueOpened"
+                    :default-active="state.defaultActive"
+                    :collapse="config.layout.menuCollapse"
+                    ref="layoutMenuRef"
+                    :style="{
+                        '--el-menu-bg-color': config.getColorVal('menuBackground'),
+                        '--el-menu-text-color': config.getColorVal('menuColor'),
+                        '--el-menu-active-color': config.getColorVal('menuActiveColor')
+                    }"
+                >
+                    <menu-tree :menus="navTabs.state.tabsViewRoutes" />
+                </el-menu>
+            </el-scrollbar>
+            `,
         props: {
             route: {
                 type: Object,
@@ -54,41 +72,16 @@
                 currentRouteActive(props.route);
                 verticalMenusScroll();
             });
+            console.log(config.layout.menuCollapse);
+
 
             return {
                 state,
+                config,
+                navTabs,
                 verticalMenusScrollbarHeight
             };
         },
-        render() {
-            const config = useConfig();
-            const navTabs = useNavTabs();
-
-            return Vue.h(ElScrollbar, {
-                ref: 'layoutMenuScrollbarRef',
-                class: 'vertical-menus-scrollbar',
-                style: {
-                    height: this.verticalMenusScrollbarHeight,
-                    backgroundColor: config.getColorVal('menuBackground')
-                }
-            }, () => [
-                Vue.h(ElMenu, {
-                    class: 'layouts-menu-vertical',
-                    'collapse-transition': false,
-                    'unique-opened': config.layout.menuUniqueOpened,
-                    'default-active': this.state.defaultActive,
-                    collapse: config.layout.menuCollapse,
-                    ref: 'layoutMenuRef',
-                    style: {
-                        '--el-menu-bg-color': config.getColorVal('menuBackground'),
-                        '--el-menu-text-color': config.getColorVal('menuColor'),
-                        '--el-menu-active-color': config.getColorVal('menuActiveColor')
-                    }
-                }, () => [
-                    Vue.h(window.MenuTree, { menus: navTabs.state.tabsViewRoutes, config: config })
-                ])
-            ]);
-        }
     };
 
     return MenuVertical;
