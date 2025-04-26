@@ -72,8 +72,6 @@
                 currentRouteActive(props.route);
                 verticalMenusScroll();
             });
-            console.log(config.layout.menuCollapse);
-
 
             return {
                 state,

@@ -18,7 +18,7 @@
                 method:'get',
             }).then(res=>{
                 if (res.code==1) {
-                    navTabs.setTabsViewRoutes(res.data.menus)
+                    route.handleAdminRoute(res.data.menus)
                 }
             })
 

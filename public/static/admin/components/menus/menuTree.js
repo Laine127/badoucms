@@ -12,16 +12,16 @@
             <template v-if="menu.children && menu.children.length > 0">
                 <el-sub-menu @click="onClickSubMenu(menu)" :index="menu.path" :key="menu.path">
                     <template #title>
-                        <Icon :color="config.getColorVal('menuColor')" :name="menu.icon ? menu.icon : config.layout.menuDefaultIcon" />
-                        <span>{{ menu.title ? menu.title : __('noTitle') }}</span>
+                        <Icon :color="config.getColorVal('menuColor')" :name="menu.meta.icon ? menu.meta.icon : config.layout.menuDefaultIcon" />
+                        <span>{{ menu.meta.title ? menu.meta.title : __('noTitle') }}</span>
                     </template>
                     <menu-tree :extends="{ ...menuextends, level: menuextends.level + 1 }" :menus="menu.children"></menu-tree>
                 </el-sub-menu>
             </template>
             <template v-else>
                 <el-menu-item :index="menu.path" :key="menu.path" @click="onClickMenu(menu)">
-                    <Icon :color="config.getColorVal('menuColor')" :name="menu.icon ? menu.icon : config.layout.menuDefaultIcon" />
-                    <span>{{ menu.title ? menu.title : __('noTitle') }}</span>
+                    <Icon :color="config.getColorVal('menuColor')" :name="menu.meta.icon ? menu.meta.icon : config.layout.menuDefaultIcon" />
+                    <span>{{ menu.meta.title ? menu.meta.title : __('noTitle') }}</span>
                 </el-menu-item>
             </template>
         </template>
