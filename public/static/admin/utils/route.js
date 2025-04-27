@@ -14,7 +14,7 @@
 
         const navTabs = useNavTabs();
 
-        const menuAdminBaseRoute = Config.app_url + `/`;
+        const menuAdminBaseRoute = Config.app_url + `#/`;
 
         // 更新导航标签数据
         navTabs.setTabsViewRoutes(handleMenuRule(routes, menuAdminBaseRoute));

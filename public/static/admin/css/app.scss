@@ -22,7 +22,9 @@ body,
   color: var(--el-text-color-primary);
   font-size: var(--el-font-size-base);
 }
-
+[v-cloak] {
+  display: none;
+}
 :root {
   --ba-main-space: 16px;
   --ba-color-primary-light: #3f6ad8;

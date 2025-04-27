@@ -1,4 +1,4 @@
-<div id="aside">
+<div id="aside" v-cloak>
     <el-aside v-if="!navTabs.state.tabFullScreen" :class="'layout-aside-' + config.layout.layoutMode + ' ' + (config.layout.shrink ? 'shrink' : '')" :style="'width: ' + config.menuWidth()">
 
         <Logo v-if="config.layout.menuShowTopBar" ></Logo>
@@ -7,7 +7,7 @@
     </el-aside>
 </div>
 
-<script>
+<script data-render="script">
     var Aside={
         setup(){
             const navTabs = useNavTabs();
@@ -31,19 +31,13 @@
             }
         }
     }
-    const aside = Vue.createApp(Aside);
-    aside.use(ElementPlus);
-    aside.use(window.pinia);
 
-    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-        aside.component(key, component)
+    const components = {
+        Logo,
+        MenuVerticalChildren,
+        'menu-vertical': MenuVertical,
+        'menu-tree': MenuTree,
+        MenuHorizontal
     }
-    aside.component('Svg', Svg);
-    aside.component('Icon', Icon);
-    aside.component('Logo', Logo);
-    aside.component('MenuVerticalChildren', MenuVerticalChildren);
-    aside.component('menu-vertical', MenuVertical);
-    aside.component('menu-tree', MenuTree);
-    aside.component('MenuHorizontal', MenuHorizontal);
-    aside.mount("#aside");
+    createVue('aside', Aside, components);
 </script>

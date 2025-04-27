@@ -16,6 +16,41 @@ function p(...$vars)
     }
 }
 
+if (!function_exists('view_filter')) {
+    function view_filter(&$content)
+    {
+        $style = '';
+        $script = '';
+
+        // 第一步：提取并存储 script 和 style 内容
+        $result = preg_replace_callback(
+            "/<(script|style)\s*(data\-render=\"(script|style)\")([\s\S]*?)>([\s\S]*?)<\/(script|style)>/i",
+            function ($match) use (&$style, &$script) {
+                if (isset($match[1]) && in_array($match[1], ['style', 'script'])) {
+                    ${$match[1]} .= str_replace($match[2], '', $match[0]);
+                }
+                return '';
+            },
+            $content
+        );
+
+        // 确保 $result 不为 null
+        $result = $result ?? $content;
+
+        // 第二步：替换占位符
+        $content = preg_replace_callback(
+            '/\{__STYLE__\}|\{__SCRIPT__\}/',
+            function ($matches) use ($style, $script) {
+                return $matches[0] === '{__STYLE__}' ? $style : $script;
+            },
+            $result
+        );
+
+        // 确保返回字符串
+        return (string)$content;
+    }
+}
+
 if (!function_exists('copydirs')) {
 
     /**

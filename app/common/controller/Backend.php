@@ -142,6 +142,8 @@ class Backend extends BaseController
      */
     protected object $view;
 
+    protected bool $isView = false;
+
     /**
      * 初始化
      * @throws Throwable
@@ -149,10 +151,18 @@ class Backend extends BaseController
     public function initialize(): void
     {
         parent::initialize();
+        // 视图请求
         $this->view = View::instance();
         $this->view->config([
-            'view_dir_name' => 'view',
+            'view_dir_name' => 'view'
         ]);
+        //视图过滤
+        $this->view->filter(function ($content) {
+            return view_filter($content);
+        });
+        if ($this->request->param('view', 0)) {
+            $this->isView = true;
+        }
         $needLogin = !action_in_arr($this->noNeedLogin);
 
         try {

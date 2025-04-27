@@ -1,3 +1,166 @@
-<div class="layout-header">
-    头部
-</div>
+<header id="layout-header" class="el-header layout-header" v-cloak>
+  <div
+    class="nav-bar"
+    :style="'background-color: '+config.getColorVal('headerBarBackground')"
+  >
+    <div
+      v-if="config.layout.shrink && config.layout.menuCollapse"
+      class="unfold"
+    >
+      <Icon
+        @click="onMenuCollapse"
+        name="fa fa-indent"
+        :color="config.getColorVal('menuActiveColor')"
+        size="18"
+      />
+    </div>
+
+    <div class="nav-menus" :class="config.layout.layoutMode">
+      <!-- 站点主页 -->
+      <a href="/" class="h100" target="_blank">
+        <div class="nav-menu-item">
+          <Icon
+            :color="config.getColorVal('headerBarTabColor')"
+            class="nav-menu-icon"
+            name="el-icon-Monitor"
+            size="18"
+          />
+        </div>
+      </a>
+      <!-- 清除缓存 -->
+      <el-dropdown
+        v-if="adminInfo.super"
+        @visible-change="onCurrentNavMenu($event, 'clear')"
+        class="h100"
+        size="large"
+        :hide-timeout="50"
+        placement="bottom"
+        trigger="click"
+        :hide-on-click="true"
+      >
+        <div
+          class="nav-menu-item"
+          :class="state.currentNavMenu == 'clear' ? 'hover' : ''"
+        >
+          <Icon
+            :color="config.getColorVal('headerBarTabColor')"
+            class="nav-menu-icon"
+            name="el-icon-Delete"
+            size="18"
+          />
+        </div>
+        <template #dropdown>
+          <el-dropdown-menu class="dropdown-menu-box">
+            <el-dropdown-item @click="onClearCache('tp')">
+              {{ __('Clean up system cache') }}
+            </el-dropdown-item>
+            <el-dropdown-item @click="onClearCache('storage')">
+              {{ __('Clean up browser cache') }}
+            </el-dropdown-item>
+            <el-dropdown-item @click="onClearCache('all')" divided>
+              {{ __('Clean up all cache') }}
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+
+      <!-- 管理员信息 -->
+      <el-popover
+        @show="onCurrentNavMenu(true, 'adminInfo')"
+        @hide="onCurrentNavMenu(false, 'adminInfo')"
+        placement="bottom-end"
+        :hide-after="0"
+        :width="260"
+        trigger="click"
+        popper-class="admin-info-box"
+        v-model:visible="state.showAdminInfoPopover"
+      >
+        <template #reference>
+          <div
+            class="admin-info"
+            :class="state.currentNavMenu == 'adminInfo' ? 'hover' : ''"
+          >
+            <el-avatar :size="25" :src="fullUrl(adminInfo.avatar)"></el-avatar>
+            <div class="admin-name">{{ adminInfo.nickname }}</div>
+          </div>
+        </template>
+        <div>
+          <div class="admin-info-base">
+            <el-avatar :size="70" :src="fullUrl(adminInfo.avatar)"></el-avatar>
+            <div class="admin-info-other">
+              <div class="admin-info-name">{{ adminInfo.nickname }}</div>
+              <div class="admin-info-lasttime">
+                {{ adminInfo.last_login_time }}
+              </div>
+            </div>
+          </div>
+          <div class="admin-info-footer">
+            <el-button @click="onAdminInfo" type="primary" plain>
+              {{ __('personal data') }}
+            </el-button>
+            <el-button @click="onLogout" type="danger" plain>
+              {{ __('cancellation') }}
+            </el-button>
+          </div>
+        </div>
+      </el-popover>
+    </div>
+  </div>
+
+  <Tabs ref="tabsRef"></Tabs>
+</header>
+
+<script data-render="script">
+  var Header = {
+    setup() {
+      const navTabs = useNavTabs();
+      const config = useConfig();
+      const adminInfo = useAdminInfo();
+      const tabsRef=Vue.ref(null);
+      const onMenuCollapse = () => {
+        showShade("ba-aside-menu-shade", () => {
+          config.setLayout("menuCollapse", true);
+        });
+        config.setLayout("menuCollapse", false);
+      };
+
+      const state = Vue.reactive({
+        isFullScreen: false,
+        currentNavMenu: "",
+        showLayoutDrawer: false,
+        showAdminInfoPopover: false,
+      });
+      const onCurrentNavMenu = (status, name) => {
+        state.currentNavMenu = status ? name : "";
+      };
+      const onClearCache = (type) => {
+        if (type == "storage" || type == "all") {
+          const adminInfo = Local.get(ADMIN_INFO);
+          const baAccount = Local.get(BA_ACCOUNT);
+          Session.clear();
+          Local.clear();
+          Local.set(ADMIN_INFO, adminInfo);
+          Local.set(BA_ACCOUNT, baAccount);
+          if (type == "storage") return;
+        }
+        // postClearCache(type).then(() => {})
+      };
+
+    window.addEventListener('popstate', () => {
+        if (tabsRef.value) {
+            tabsRef.value.updateTab('moduleStore');
+        }
+    });
+      return {
+        state,
+        config: config,
+        navTabs: navTabs,
+        adminInfo,
+        onCurrentNavMenu,
+        onClearCache,
+        fullUrl
+      };
+    },
+  };
+  createVue("layout-header", Header,{Tabs});
+</script>

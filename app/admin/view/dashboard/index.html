@@ -1,0 +1,388 @@
+<link
+  href="__CDN__/static/admin/css/dashboard.min.css"
+  rel="stylesheet"
+  data-render="style"
+/>
+<div class="default-main" id="dashboard">
+  <div class="banner">
+    <el-row :gutter="10">
+      <el-col :md="24" :lg="18">
+        <div class="welcome suspension">
+          <img class="welcome-img" :src="headerSvg" alt="" />
+          <div class="welcome-text">
+            <div class="welcome-title">
+              {{ adminInfo.nickname + __('utils.comma') + getGreet() }}
+            </div>
+            <div class="welcome-note">{{ state.remark }}</div>
+          </div>
+        </div>
+      </el-col>
+      <el-col :lg="6" class="hidden-md-and-down">
+        <div class="working">
+          <img class="working-coffee" :src="coffeeSvg" alt="" />
+          <div class="working-text">
+            {{ __('dashboard.You have worked today') }}
+            <span class="time">{{ state.workingTimeFormat }}</span>
+          </div>
+          <div @click="onChangeWorkState()" class="working-opt working-rest">
+            {{ state.pauseWork ? __('dashboard.Continue to work') :
+            __('dashboard.have a bit of rest') }}
+          </div>
+        </div>
+      </el-col>
+    </el-row>
+  </div>
+  <div class="small-panel-box">
+    <el-row :gutter="20">
+      <el-col :sm="12" :lg="4">
+        <div class="small-panel user-reg suspension">
+          <router-link to="/admin/cms/models">
+            <div class="small-panel-title">模型管理</div>
+            <div class="small-panel-content">
+              <div class="content-left">
+                <Icon color="#91CC76" size="20" name="fa fa-codepen" />
+                <el-statistic
+                  :value="state.counts.modelCount"
+                  :value-style="statisticValueStyle"
+                />
+              </div>
+            </div>
+          </router-link>
+        </div>
+      </el-col>
+      <el-col :sm="12" :lg="4">
+        <div class="small-panel users suspension">
+          <router-link to="/admin/cms/contentSort">
+            <div class="small-panel-title">栏目管理</div>
+            <div class="small-panel-content">
+              <div class="content-left">
+                <Icon color="#4E73DF" size="20" name="fa fa-align-justify" />
+                <el-statistic
+                  :value="state.counts.categoryCount"
+                  :value-style="statisticValueStyle"
+                />
+              </div>
+            </div>
+          </router-link>
+        </div>
+      </el-col>
+      <el-col
+        :sm="12"
+        :lg="4"
+        v-for="model in state.modelList"
+        :key="model.mcode"
+      >
+        <div class="small-panel addons suspension">
+          <router-link :to="`/admin/cms/content/mcode/${model.mcode}`">
+            <div class="small-panel-title">{{ model.name }}</div>
+            <div class="small-panel-content">
+              <div class="content-left">
+                <Icon color="#FF6900" size="20" name="fa fa-file-text-o" />
+                <el-statistic
+                  :value="state.counts.contentCount[model.mcode].count"
+                  :value-style="statisticValueStyle"
+                />
+              </div>
+            </div>
+          </router-link>
+        </div>
+      </el-col>
+    </el-row>
+  </div>
+
+  <div class="system-info">
+    <el-row :gutter="20">
+      <el-col class="lg-mb-20" :xs="24" :sm="24" :md="12" :lg="12">
+        <el-card shadow="hover" header="系统信息">
+          <el-row>
+            <el-col :sm="24" :lg="4" class="label">应用版本</el-col>
+            <el-col :sm="24" :lg="20" class="text">BadouCMS 开源版</el-col>
+          </el-row>
+          <el-row>
+            <el-col :sm="24" :lg="4" class="label">系统</el-col>
+            <el-col :sm="24" :lg="20" class="text">
+              {{ state.server.php_os }}
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :sm="24" :lg="4" class="label">地址</el-col>
+            <el-col :sm="24" :lg="20" class="text">
+              {{ state.server.server_name }} {{ state.server.server_addr }}:{{
+              state.server.server_port }}
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :sm="24" :lg="4" class="label">WEB软件</el-col>
+            <el-col :sm="24" :lg="20" class="text">
+              {{ state.server.web_software }}
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :sm="24" :lg="4" class="label">PHP版</el-col>
+            <el-col :sm="24" :lg="20" class="text">
+              {{ state.server.php_version }}
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :sm="24" :lg="4" class="label">文件上传限制</el-col>
+            <el-col :sm="24" :lg="20" class="text">
+              {{ state.server.upload_max_filesize }}
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :sm="24" :lg="4" class="label">表单提交限制</el-col>
+            <el-col :sm="24" :lg="20" class="text">
+              {{ state.server.post_max_size }}
+            </el-col>
+          </el-row>
+        </el-card>
+      </el-col>
+      <el-col :xs="24" :sm="24" :md="24" :lg="12">
+        <el-card shadow="hover" header="开发信息">
+          <el-row>
+            <el-col :sm="24" :lg="4" class="label">系统名称</el-col>
+            <el-col :sm="24" :lg="20" class="text">BadouCMS网站管理系统</el-col>
+          </el-row>
+          <el-row>
+            <el-col :sm="24" :lg="4" class="label">官方网站</el-col>
+            <el-col :sm="24" :lg="20" class="text"></el-col>
+          </el-row>
+          <el-row>
+            <el-col :sm="24" :lg="4" class="label">源码下载</el-col>
+            <el-col :sm="24" :lg="20" class="text">
+              <a href="https://gitee.com/lande_admin/badoucms" target="_blank">
+                https://gitee.com/lande_admin/badoucms
+              </a>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :sm="24" :lg="4" class="label">系统开发</el-col>
+            <el-col :sm="24" :lg="20" class="text">
+              <a href="https://gitee.com/lande_admin" target="_blank">lande</a>
+              、
+              <a href="https://gitee.com/YuriysWu" target="_blank">YuriWu</a>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :sm="24" :lg="4" class="label">版权协议</el-col>
+            <el-col :sm="24" :lg="20" class="text"></el-col>
+          </el-row>
+          <el-row>
+            <el-col :sm="24" :lg="4" class="label">技术交流群</el-col>
+            <el-col :sm="24" :lg="20" class="text">QQ群：963655847</el-col>
+          </el-row>
+        </el-card>
+      </el-col>
+    </el-row>
+  </div>
+</div>
+
+<script type="text/javascript">
+  const Dashboard = {
+    setup() {
+      const {
+        CSSProperties,
+        nextTick,
+        onActivated,
+        onBeforeMount,
+        onMounted,
+        onUnmounted,
+        reactive,
+        toRefs,
+        watch,
+      } = Vue;
+      const navTabs = useNavTabs();
+      const adminInfo = useAdminInfo();
+      const config = useConfig();
+
+      const state = reactive({
+        charts: [],
+        remark: "dashboard.Loading",
+        workingTimeFormat: "",
+        pauseWork: false,
+        server: {},
+        counts: {},
+        modelList: [],
+      });
+
+      /**
+       * 带有数字向上变化特效的数据
+       */
+      const countUp = reactive({
+        userRegNumber: 0,
+        fileNumber: 0,
+        usersNumber: 0,
+        addonsNumber: 0,
+      });
+
+      const countUpRefs = toRefs(countUp);
+      const statisticValueStyle = {
+        fontSize: "28px",
+      };
+
+      createAxios({
+        url: "dashboard/index",
+        method: "get",
+      }).then((res) => {
+        state.remark = res.data.remark;
+        state.server = res.data.server;
+        state.counts = res.data.counts;
+        state.modelList = res.data.modelList;
+      });
+
+      const initCountUp = () => {
+        // 虚拟数据
+        countUpRefs.userRegNumber.value = 5456;
+        countUpRefs.fileNumber.value = 1234;
+        countUpRefs.usersNumber.value = 9486;
+        countUpRefs.addonsNumber.value = 875;
+      };
+
+      const echartsResize = () => {
+        nextTick(() => {
+          for (const key in state.charts) {
+            state.charts[key].resize();
+          }
+        });
+      };
+
+      const onChangeWorkState = () => {
+        const time = parseInt((new Date().getTime() / 1000).toString());
+        const workingTime = Local.get(WORKING_TIME);
+        if (state.pauseWork) {
+          // 继续工作
+          workingTime.pauseTime += time - workingTime.startPauseTime;
+          workingTime.startPauseTime = 0;
+          Local.set(WORKING_TIME, workingTime);
+          state.pauseWork = false;
+          startWork();
+        } else {
+          // 暂停工作
+          workingTime.startPauseTime = time;
+          Local.set(WORKING_TIME, workingTime);
+          clearInterval(workTimer);
+          state.pauseWork = true;
+        }
+      };
+
+      const startWork = () => {
+        const workingTime = Local.get(WORKING_TIME) || {
+          date: "",
+          startTime: 0,
+          pauseTime: 0,
+          startPauseTime: 0,
+        };
+        const currentDate =
+          d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+        const time = parseInt((new Date().getTime() / 1000).toString());
+
+        if (workingTime.date != currentDate) {
+          workingTime.date = currentDate;
+          workingTime.startTime = time;
+          workingTime.pauseTime = workingTime.startPauseTime = 0;
+          Local.set(WORKING_TIME, workingTime);
+        }
+
+        let startPauseTime = 0;
+        if (workingTime.startPauseTime <= 0) {
+          state.pauseWork = false;
+          startPauseTime = 0;
+        } else {
+          state.pauseWork = true;
+          startPauseTime = time - workingTime.startPauseTime; // 已暂停时间
+        }
+
+        let workingSeconds =
+          time - workingTime.startTime - workingTime.pauseTime - startPauseTime;
+
+        state.workingTimeFormat = formatSeconds(workingSeconds);
+        if (!state.pauseWork) {
+          workTimer = window.setInterval(() => {
+            workingSeconds++;
+            state.workingTimeFormat = formatSeconds(workingSeconds);
+          }, 1000);
+        }
+      };
+
+      const formatSeconds = (seconds) => {
+        var secondTime = 0; // 秒
+        var minuteTime = 0; // 分
+        var hourTime = 0; // 小时
+        var dayTime = 0; // 天
+        var result = "";
+
+        if (seconds < 60) {
+          secondTime = seconds;
+        } else {
+          // 获取分钟，除以60取整数，得到整数分钟
+          minuteTime = Math.floor(seconds / 60);
+          // 获取秒数，秒数取佘，得到整数秒数
+          secondTime = Math.floor(seconds % 60);
+          // 如果分钟大于60，将分钟转换成小时
+          if (minuteTime >= 60) {
+            // 获取小时，获取分钟除以60，得到整数小时
+            hourTime = Math.floor(minuteTime / 60);
+            // 获取小时后取佘的分，获取分钟除以60取佘的分
+            minuteTime = Math.floor(minuteTime % 60);
+            if (hourTime >= 24) {
+              // 获取天数， 获取小时除以24，得到整数天
+              dayTime = Math.floor(hourTime / 24);
+              // 获取小时后取余小时，获取分钟除以24取余的分；
+              hourTime = Math.floor(hourTime % 24);
+            }
+          }
+        }
+
+        result =
+          hourTime +
+          __("dashboard.hour") +
+          ((minuteTime >= 10 ? minuteTime : "0" + minuteTime) +
+            __("dashboard.minute")) +
+          ((secondTime >= 10 ? secondTime : "0" + secondTime) +
+            __("dashboard.second"));
+        if (dayTime > 0) {
+          result = dayTime + __("dashboard.day") + result;
+        }
+        return result;
+      };
+
+      onActivated(() => {
+        echartsResize();
+      });
+
+      onMounted(() => {
+        startWork();
+        initCountUp();
+        useEventListener(window, "resize", echartsResize);
+      });
+
+      onBeforeMount(() => {
+        for (const key in state.charts) {
+          state.charts[key].dispose();
+        }
+      });
+
+      onUnmounted(() => {
+        clearInterval(workTimer);
+      });
+
+      watch(
+        () => navTabs.state.tabFullScreen,
+        () => {
+          echartsResize();
+        }
+      );
+
+      return {
+        config,
+        adminInfo,
+        state,
+        getGreet,
+        statisticValueStyle,
+        onChangeWorkState,
+      };
+    },
+  };
+
+  createVue("dashboard", Dashboard);
+</script>

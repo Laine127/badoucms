@@ -12,8 +12,11 @@ class Dashboard extends Backend
         parent::initialize();
     }
 
-    public function index(): void
+    public function index()
     {
+        if ($this->isView) {
+            return $this->view->fetch();
+        }
         $server = [
             'php_os'              => PHP_OS,
             'server_name'         => $_SERVER['SERVER_NAME'],
@@ -42,7 +45,7 @@ class Dashboard extends Backend
                 ->find();
         }
 
-        $this->success('', [
+        $this->success('', '', [
             'remark' => get_route_remark(),
             'server' => $server,
             'counts' => $counts,

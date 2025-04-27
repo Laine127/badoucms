@@ -1,4 +1,43 @@
 /**
+ * 创建应用
+ * @param {*} id            Dom id
+ * @param {*} Index         应用
+ * @param {*} components    组件
+ */
+function createVue(id, Index, components) {
+    const app = Vue.createApp(Index);
+    app.use(ElementPlus);
+    app.use(window.pinia);
+
+    for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+        app.component(key, component)
+    }
+    app.component('Svg', Svg);
+    app.component('Icon', Icon);
+    if (components) {
+        for (const [key, component] of Object.entries(components)) {
+            app.component(key, component)
+        }
+    }
+    app.mount(`#${id}`)
+}
+
+function fullUrl(relativeUrl, domain = '') {
+    const siteConfig = Config.siteConfig
+    if (!domain) {
+        domain = siteConfig.cdnUrl ? siteConfig.cdnUrl : getUrl()
+    }
+    if (!relativeUrl) return domain
+
+    const regUrl = new RegExp(/^http(s)?:\/\//)
+    const regexImg = new RegExp(/^((?:[a-z]+:)?\/\/|data:image\/)(.*)/i)
+    if (!domain || regUrl.test(relativeUrl) || regexImg.test(relativeUrl)) {
+        return relativeUrl
+    }
+    return domain + relativeUrl
+}
+
+/**
  * 生成唯一标识
  * @param prefix 前缀
  * @returns 唯一标识

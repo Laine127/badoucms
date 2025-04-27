@@ -32,8 +32,11 @@ class Config extends Backend
         $this->model = new ConfigModel();
     }
 
-    public function index(): void
+    public function index()
     {
+        if (!$this->request->isAjax()) {
+            return $this->view->fetch();
+        }
         $configGroup = get_sys_config('config_group');
         $config      = $this->model->order('weigh desc')->select()->toArray();
 
@@ -51,7 +54,7 @@ class Config extends Backend
             }
         }
 
-        $this->success('', [
+        $this->success('', '', [
             'list'          => $list,
             'remark'        => get_route_remark(),
             'configGroup'   => $newConfigGroup ?? [],
