@@ -110,3 +110,28 @@ function closeShade(closeCallBack = function () { }) {
     shadeEl && shadeEl.remove();
     closeCallBack();
 }
+
+function getGreet() {
+    const now = new Date()
+    const hour = now.getHours()
+    let greet = ''
+
+    if (hour < 5) {
+        greet = __('Late at night, pay attention to your body!')
+    } else if (hour < 9) {
+        greet = __('good morning!') + __('welcome back')
+    } else if (hour < 12) {
+        greet = __('Good morning!') + __('welcome back')
+    } else if (hour < 14) {
+        greet = __('Good noon!') + __('welcome back')
+    } else if (hour < 18) {
+        greet = __('good afternoon') + __('welcome back')
+    } else if (hour < 24) {
+        greet = __('Good evening') + __('welcome back')
+    } else {
+        greet = __('Hello!') + __('welcome back')
+    }
+    console.log(greet);
+
+    return greet
+}

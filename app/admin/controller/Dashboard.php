@@ -28,14 +28,22 @@ class Dashboard extends Backend
             'post_max_size'       => ini_get('post_max_size'),
         ];
 
-        $modelCount = Db::name('cms_model')->where('status', 1)->count();
-        $categoryCount = Db::name('cms_content_sort')->where('acode', get_backend_lang())->where('status', 1)->count();
+        $modelCount = Db::name('cms_model')
+            ->where('status', 1)
+            ->count();
+
+        $categoryCount = Db::name('cms_content_sort')
+            ->where('acode', get_backend_lang())
+            ->where('status', 1)->count();
+
         $counts = [
             'modelCount' => $modelCount,
             'categoryCount' => $categoryCount,
         ];
 
-        $modelList = Db::name('cms_model')->where('status', 1)->select();
+        $modelList = Db::name('cms_model')
+            ->where('status', 1)
+            ->select();
         foreach ($modelList as $model) {
             $counts['contentCount'][$model['mcode']] = Db::name('cms_content')->alias('a')->field('count(*) as count')
                 ->where('b.mcode', $model['mcode'])

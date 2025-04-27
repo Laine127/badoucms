@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    {include file="common/meta" }
+    {include file="common/meta" /}
 
     {__STYLE__}
   </head>
   <body>
-
     <section class="el-container layout-container">
         {include file="common/aside" }
         <div class="content-wrapper">
-            {include file="common/header" }
+            {include file="common/header" /}
+
             {block name="main"} {/block}
         </div>
     </section>
-
-    {include file="common/script" }
+    {include file="common/script" /}
 
     {__SCRIPT__}
   </body>

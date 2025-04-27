@@ -5,6 +5,29 @@
 }(this, (function ($) {
 	'use strict';
 
+	/**
+	 * 加载页面内容
+	 * @param {string} url 请求地址
+	 * @param {jQuery} $frame 页面容器
+	 * @param {jQuery} [$frameLoad] 加载动画容器
+	 */
+	function loadPageContent(url, $frame, $frameLoad) {
+		return $.ajax({
+			url: url,
+			type: 'get',
+			dataType: 'html',
+			success: function (data) {
+				$frame.html(data);
+				if ($frameLoad) {
+					$frameLoad.fadeOut(1000);
+				}
+			},
+			error: function (xhr) {
+				ElementPlus.ElMessage.error('页面加载失败！');
+			}
+		});
+	}
+
 	var Page = function (opt) {
 		// 确保 opt 存在且有默认值
 		this.option = opt || {};
@@ -18,7 +41,7 @@
 		// 保存配置到实例
 		this.option = {
 			elem: opt.elem,
-			url: opt.url,
+			url: opt.url + '?view=1',
 			width: opt.width || "100%",
 			height: opt.height || "100%",
 			title: opt.title,
@@ -37,31 +60,18 @@
 		if (options.type === "_iframe") {
 			$frame.html(`<iframe src='${options.href}' scrolling='auto' frameborder='0' allowfullscreen='true'></iframe>`);
 		} else {
-			$.ajax({
-				url: options.href,
-				type: 'get',
-				data: {
-					view: 1
-				},
-				dataType: 'html',
-				success: function (data) {
-					$frame.html(data);
-				},
-				error: function (xhr) {
-					ElementPlus.ElMessage.error('页面加载失败！');
-				}
-			});
+			loadPageContent(options.href, $frame);
 		}
 		$frame.attr("type", options.type);
 		$frame.attr("href", options.href);
-	}
+	};
 
 	/**
 	 * 刷新页面
 	 */
 	Page.prototype.refresh = function (loading) {
-		var $frameLoad = $(`#${this.option.elem} .pear-page-loading`);
-		var $frame = $(`#${this.option.elem} .pear-page-content`);
+		const $frameLoad = $(`#${this.option.elem} .pear-page-loading`);
+		const $frame = $(`#${this.option.elem} .pear-page-content`);
 
 		if (loading) {
 			$frameLoad.css({ display: 'block' });
@@ -74,28 +84,14 @@
 				$frameLoad.fadeOut(1000);
 			});
 		} else {
-			$.ajax({
-				type: 'get',
-				url: $frame.attr("href"),
-				data: {
-					view: 1,
-				},
-				dataType: 'html',
-				success: function (data) {
-					$frame.html(data);
-					$frameLoad.fadeOut(1000);
-				},
-				error: function (xhr) {
-					ElementPlus.ElMessage.error('页面加载失败！');
-				}
-			});
+			loadPageContent($frame.attr("href"), $frame, $frameLoad);
 		}
-	}
+	};
 
 	function renderContent(option) {
 		$(`#${option.elem}`).html(`
-            <div class='pear-page'>
-                <div class='pear-page-content' type='${option.type}' href='${option.url}'></div>
+            <div style='width:${option.width};'>
+                <div class="main-content-warpper" style='width:${option.width};' type='${option.type}' href='${option.url}'></div>
                 <div class="pear-page-loading">
                     <div class="ball-loader">
                         <span></span>
@@ -107,25 +103,12 @@
             </div>
         `);
 
-		var $frame = $(`#${option.elem}`).find(".pear-page-content");
+		const $frame = $(`#${option.elem}`).find(".main-content-warpper");
 
 		if (option.type === "_iframe") {
-			$frame.html(`<iframe src='${option.url}' scrolling='auto' frameborder='0' allowfullscreen='true'></iframe>`);
+			$frame.html(`<iframe src='${option.url}' scrolling='auto' frameborder='0' allowfullscreen='true'style='width:${option.width};height:${option.height};'></iframe>`);
 		} else {
-			$.ajax({
-				url: option.url,
-				type: 'get',
-				data: {
-					view: 1
-				},
-				dataType: 'html',
-				success: function (data) {
-					$frame.html(data);
-				},
-				error: function (xhr) {
-					ElementPlus.ElMessage.error('页面加载失败！');
-				}
-			});
+			loadPageContent(option.url, $frame);
 		}
 	}
 

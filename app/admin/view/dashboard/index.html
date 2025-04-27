@@ -1,17 +1,22 @@
+<script type="text/javascript">
+  window.Config = {$config|default=""|raw|json_encode};
+</script>
+<script src="__CDN__/static/admin/js/lang.js"></script>
 <link
   href="__CDN__/static/admin/css/dashboard.min.css"
   rel="stylesheet"
   data-render="style"
 />
-<div class="default-main" id="dashboard">
+
+<div class="default-main" id="dashboard" v-cloak>
   <div class="banner">
     <el-row :gutter="10">
       <el-col :md="24" :lg="18">
         <div class="welcome suspension">
-          <img class="welcome-img" :src="headerSvg" alt="" />
+          <img class="welcome-img" src="__CDN__/static/admin/images/header-1.svg" alt="" />
           <div class="welcome-text">
             <div class="welcome-title">
-              {{ adminInfo.nickname + __('utils.comma') + getGreet() }}
+              {{ adminInfo.nickname }} {{ __('comma')}} {{ getGreet()}}
             </div>
             <div class="welcome-note">{{ state.remark }}</div>
           </div>
@@ -19,14 +24,14 @@
       </el-col>
       <el-col :lg="6" class="hidden-md-and-down">
         <div class="working">
-          <img class="working-coffee" :src="coffeeSvg" alt="" />
+          <img class="working-coffee" src="__CDN__/static/admin/images/coffee.svg" alt="" />
           <div class="working-text">
-            {{ __('dashboard.You have worked today') }}
+            {:__('You have worked today')}
             <span class="time">{{ state.workingTimeFormat }}</span>
           </div>
           <div @click="onChangeWorkState()" class="working-opt working-rest">
-            {{ state.pauseWork ? __('dashboard.Continue to work') :
-            __('dashboard.have a bit of rest') }}
+            {{ state.pauseWork ? __('Continue to work') :
+            __('have a bit of rest') }}
           </div>
         </div>
       </el-col>
@@ -191,13 +196,16 @@
         toRefs,
         watch,
       } = Vue;
+      const {Local}=Storage
+      const WORKING_TIME = 'workingTime'
+      const d = new Date()
       const navTabs = useNavTabs();
       const adminInfo = useAdminInfo();
       const config = useConfig();
 
       const state = reactive({
         charts: [],
-        remark: "dashboard.Loading",
+        remark: "Loading",
         workingTimeFormat: "",
         pauseWork: false,
         server: {},
@@ -335,13 +343,13 @@
 
         result =
           hourTime +
-          __("dashboard.hour") +
+          __("hour") +
           ((minuteTime >= 10 ? minuteTime : "0" + minuteTime) +
-            __("dashboard.minute")) +
+            __("minute")) +
           ((secondTime >= 10 ? secondTime : "0" + secondTime) +
-            __("dashboard.second"));
+            __("second"));
         if (dayTime > 0) {
-          result = dayTime + __("dashboard.day") + result;
+          result = dayTime + __("day") + result;
         }
         return result;
       };
@@ -353,7 +361,7 @@
       onMounted(() => {
         startWork();
         initCountUp();
-        useEventListener(window, "resize", echartsResize);
+        window.addEventListener('resize', echartsResize);
       });
 
       onBeforeMount(() => {
@@ -364,6 +372,7 @@
 
       onUnmounted(() => {
         clearInterval(workTimer);
+        window.removeEventListener('resize', echartsResize);
       });
 
       watch(

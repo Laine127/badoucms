@@ -163,26 +163,3 @@ function fullUrl(relativeUrl, domain = '') {
     // }
     return domain + relativeUrl
 }
-
-function getGreet() {
-    const now = new Date()
-    const hour = now.getHours()
-    let greet = ''
-
-    if (hour < 5) {
-        greet = __('utils.Late at night, pay attention to your body!')
-    } else if (hour < 9) {
-        greet = __('utils.good morning!') + __('utils.welcome back')
-    } else if (hour < 12) {
-        greet = __('utils.Good morning!') + __('utils.welcome back')
-    } else if (hour < 14) {
-        greet = __('utils.Good noon!') + __('utils.welcome back')
-    } else if (hour < 18) {
-        greet = __('utils.good afternoon') + __('utils.welcome back')
-    } else if (hour < 24) {
-        greet = __('utils.Good evening') + __('utils.welcome back')
-    } else {
-        greet = __('utils.Hello!') + __('utils.welcome back')
-    }
-    return greet
-}

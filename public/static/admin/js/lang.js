@@ -14,43 +14,27 @@ function __() {
     var args = Array.from(arguments);
     var string = args[0].toLowerCase();
 
-    // 如果在 setup 函数内部调用，返回计算属性
-    if (Vue.getCurrentInstance()) {
-        return Vue.computed(() => translateText(string, args));
-    }
-
-    // 如果在普通环境调用，直接返回翻译结果
     return translateText(string, args);
 }
 
-// 翻译处理函数
+// 翻译处理函数优化
 function translateText(string, args) {
-    if (typeof window.Lang !== 'undefined' && typeof window.Lang[string] !== 'undefined') {
-        if (typeof window.Lang[string] === 'object') {
-            return window.Lang[string];
-        }
-        string = window.Lang[string];
-    } else {
-        string = args[0];
+    // 获取翻译文本
+    let translatedText = window.Lang?.[string] || args[0];
+
+    // 如果翻译结果是对象,返回原始文本
+    if (typeof translatedText === 'object') {
+        return args[0];
     }
 
-    return string.replace(/%((%)|s|d)/g, function (m) {
-        var val = null;
-        var i = 1;
-        if (m[2]) {
-            val = m[2];
-        } else {
-            val = args[i];
-            switch (m) {
-                case '%d':
-                    val = parseFloat(val);
-                    if (isNaN(val)) {
-                        val = 0;
-                    }
-                    break;
-            }
-            i++;
-        }
-        return val;
+    // 处理参数替换
+    return translatedText.replace(/%((%)|s|d)/g, (m, p1, p2) => {
+        if (p2) return '%';
+
+        const index = args.findIndex((_, i) => i > 0);
+        if (index === -1) return m;
+
+        const val = args[index];
+        return m === '%d' ? parseFloat(val) || 0 : val;
     });
 }

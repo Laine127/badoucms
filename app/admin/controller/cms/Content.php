@@ -64,8 +64,12 @@ class Content extends Base
         $this->mcode = $this->request->param('mcode') ?? 0;
     }
 
-    public function index(): void
+    public function index()
     {
+        if ($this->isView) {
+            return $this->view->fetch();
+        }
+
         if ($this->request->param('select')) {
             $this->select();
         }
@@ -107,7 +111,7 @@ class Content extends Base
             ->order($order)
             ->paginate($limit);
 
-        $this->success('', [
+        $this->success('', '', [
             'list'   => $res->items(),
             'total'  => $res->total(),
             'remark' => get_route_remark(),

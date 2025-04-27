@@ -41,6 +41,6 @@ class Common extends Base
         if (is_file($pathfull)) {
             $langarr = (array) include $pathfull;
         }
-        $this->success('ok', $langarr);
+        $this->success('ok', '', $langarr);
     }
 }

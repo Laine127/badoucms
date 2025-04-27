@@ -259,6 +259,13 @@
 .el-dialog__footer {
   background-color: #fff;
 }
+
+#main-warpper {
+  height: calc(100vh - 50px);
+  width: 100%;
+  overflow-y: auto;
+}
+
 html.dark {
   .el-dialog__footer {
     background: none !important;

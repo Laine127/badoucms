@@ -229,6 +229,7 @@ class Backend extends BaseController
         $this->view->assign('config', $config);
         //加载当前控制器语言包
         $this->loadlang($controllername, $langSet);
+
         // 管理员验权和登录标签位
         Event::trigger('backendInit', $this->auth);
     }
