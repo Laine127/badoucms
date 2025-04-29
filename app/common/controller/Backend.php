@@ -151,20 +151,9 @@ class Backend extends BaseController
     public function initialize(): void
     {
         parent::initialize();
-        // 视图请求
-        $this->view = View::instance();
-        $this->view->config([
-            'view_dir_name' => 'view'
-        ]);
-        //视图过滤
-        $this->view->filter(function ($content) {
-            return view_filter($content);
-        });
-        if ($this->request->param('view', 0)) {
-            $this->isView = true;
-        }
-        $needLogin = !action_in_arr($this->noNeedLogin);
+        $this->initView();
 
+        $needLogin = !action_in_arr($this->noNeedLogin);
         try {
             // 初始化管理员鉴权实例
             $this->auth = Auth::instance();
@@ -189,7 +178,7 @@ class Backend extends BaseController
                     $this->redirect((string)url('index/login', ['referer' => $url]), 302);
                     exit;
                 }
-                $this->error(__('Please login first'), url('index/login', ['url' => $url]));
+                $this->error(__('Please login first'), (string)url('index/login', ['url' => $url]));
             }
             if (!action_in_arr($this->noNeedPermission)) {
                 $routePath = ($this->app->request->controllerPath ?? '') . '/' . $this->request->action(true);
@@ -210,9 +199,6 @@ class Backend extends BaseController
             'actionname'     => $actionname,
             'app_url'        => $this->request->root(true),
             'language'       => $langSet,
-            'route' => [
-                'path' => $controllername.'/'.$actionname
-            ],
             'siteConfig' => [
                 'siteName'     => get_sys_config('site_name'),
                 'upload'       => keys_to_camel_case(get_upload_config(), ['max_size', 'save_name', 'allowed_suffixes', 'allowed_mime_types']),
@@ -468,5 +454,25 @@ class Backend extends BaseController
     protected function assignconfig($name, $value = '')
     {
         $this->view->config = array_merge($this->view->config ? $this->view->config : [], is_array($name) ? $name : [$name => $value]);
+    }
+
+    /**
+     * 初始化视图
+     */
+    protected function initView()
+    {
+        // 视图请求
+        $this->view = View::instance();
+        $this->view->config([
+            'view_dir_name' => 'view'
+        ]);
+        //视图过滤
+        $this->view->filter(function ($content) {
+            return view_filter($content);
+        });
+        if ($this->request->param('view', 0) ||
+            (!$this->request->isAjax() && !$this->request->isJson())) {
+            $this->isView = true;
+        }
     }
 }

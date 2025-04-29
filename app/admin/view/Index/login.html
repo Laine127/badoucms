@@ -1,7 +1,38 @@
 <!DOCTYPE html>
 <html>
   <head>
-    {include file="common/meta" /}
+    <script type="text/javascript">
+      window.Config = {$config|default=""|raw|json_encode};
+    </script>
+    <script src="__CDN__/static/libs/vue.global.min.js"></script>
+    <script src="__CDN__/static/libs/jquery/jquery.min.js"></script>
+    <script src="__CDN__/static/admin/js/lang.js"></script>
+    <script src="__CDN__/static/admin/js/vue-demi.iife.min.js"></script>
+    <script src="__CDN__/static/admin/js/pinia.iife.min.js"></script>
+    <script src="__CDN__/static/admin/js/pinia-plugin-persistedstate.global.js"></script>
+    <script src="__CDN__/static/admin/js/store.js"></script>
+    <script src="__CDN__/static/libs/element-plus/index.js"></script>
+    <script src="__CDN__/static/libs/element-plus/index.iife.min.js"></script>
+    <script src="__CDN__/static/admin/js/validate.js"></script>
+    <script src="__CDN__/static/libs/axios.min.js"></script>
+    <script src="__CDN__/static/libs/lodash.min.js"></script>
+    <script src="__CDN__/static/admin/utils/storage.js"></script>
+    <script src="__CDN__/static/admin/utils/route.js"></script>
+    <script src="__CDN__/static/admin/js/http.js"></script>
+
+    <link
+      href="__CDN__/static/libs/element-plus/index.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="__CDN__/static/libs/font-awesome/css/font-awesome.min.css"
+      rel="stylesheet"
+    />
+    <link href="__CDN__/static/admin/css/app.min.css" rel="stylesheet" />
+    <link href="__CDN__/static/admin/css/badou.min.css" rel="stylesheet" />
+    <script src="__CDN__/static/admin/stores/adminInfo.js"></script>
+    <script src="__CDN__/static/admin/stores/config.js"></script>
+    <script src="__CDN__/static/admin/js/app.js"></script>
   </head>
   <body>
     <div id="app">
@@ -112,82 +143,82 @@
       </div>
     </div>
     <script>
-        const { ref, reactive } = Vue;
-        const App = {
-          setup() {
-              const formRef = ref("");
-              const adminInfo = useAdminInfo();
-              const state = reactive({
-                  showCaptcha: false,
-                  submitLoading: false,
+      const { ref, reactive } = Vue;
+      const App = {
+        setup() {
+          const formRef = ref("");
+          const adminInfo = useAdminInfo();
+          const state = reactive({
+            showCaptcha: false,
+            submitLoading: false,
+          });
+
+          const form = reactive({
+            username: "",
+            password: "",
+            keep: false,
+            captchaId: shortUuid(),
+            captchaInfo: "",
+          });
+
+          // 表单验证规则 - Initialize with placeholders
+          const rules = reactive({
+            username: [
+              valid.buildValidatorData({
+                name: "required",
+                message: __("Please enter an account"), // Placeholder
+              }),
+              valid.buildValidatorData({ name: "account" }),
+            ],
+            password: [
+              valid.buildValidatorData({
+                name: "required",
+                message: __("Please input a password"), // Placeholder
+              }),
+              valid.buildValidatorData({ name: "password" }),
+            ],
+          });
+
+          const onSubmitPre = () => {
+            formRef.value?.validate((valid) => {
+              if (valid) {
+                onSubmit();
+              }
+            });
+          };
+
+          const onSubmit = () => {
+            state.submitLoading = true;
+            createAxios({
+              url: "index/login",
+              data: form,
+              method: "post",
+            })
+              .then((res) => {
+                if (res.code == 1) {
+                  adminInfo.dataFill(res.data.userInfo);
+                  window.location.href = res.url;
+                }
+              })
+              .finally(() => {
+                state.submitLoading = false;
               });
+          };
 
-              const form = reactive({
-                  username: "",
-                  password: "",
-                  keep: false,
-                  captchaId: shortUuid(),
-                  captchaInfo: "",
-              });
+          return {
+            formRef,
+            state,
+            form,
+            rules,
+            onSubmitPre,
+          };
+        },
+      };
 
-              // 表单验证规则 - Initialize with placeholders
-              const rules = reactive({
-                  username: [
-                      valid.buildValidatorData({
-                          name: "required",
-                          message: __("Please enter an account"), // Placeholder
-                      }),
-                      valid.buildValidatorData({ name: "account" }),
-                  ],
-                  password: [
-                      valid.buildValidatorData({
-                          name: "required",
-                          message: __("Please input a password"), // Placeholder
-                      }),
-                      valid.buildValidatorData({ name: "password" }),
-                  ],
-              });
-
-              const onSubmitPre = () => {
-                  formRef.value?.validate((valid) => {
-                      if (valid) {
-                          onSubmit();
-                      }
-                  });
-              };
-
-              const onSubmit = () => {
-                  state.submitLoading = true;
-                  createAxios({
-                      url:'index/login',
-                      data:form,
-                      method:'post',
-                  })
-                  .then((res) => {
-                      if(res.code==1){
-                        adminInfo.dataFill(res.data.userInfo)
-                        window.location.href = res.url
-                      }
-                  })
-                  .finally(() => {
-                      state.submitLoading = false;
-                  });
-              };
-
-              return {
-                  formRef,
-                  state,
-                  form,
-                  rules,
-                  onSubmitPre,
-              };
-          },
-        };
-
-        const app = Vue.createApp(App);
-        app.use(ElementPlus);
-        app.use(window.pinia);
-        app.mount("#app");
+      const app = Vue.createApp(App);
+      app.use(ElementPlus);
+      app.use(window.pinia);
+      app.mount("#app");
     </script>
   </body>
 </html>

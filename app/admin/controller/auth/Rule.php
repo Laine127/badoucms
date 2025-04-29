@@ -66,8 +66,12 @@ class Rule extends Backend
         $this->assembleTree = $isTree && !$this->initValue;
     }
 
-    public function index(): void
+    public function index()
     {
+        if ($this->isView) {
+            return $this->view->fetch();
+        }
+
         if ($this->request->param('select')) {
             $this->select();
         }

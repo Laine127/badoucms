@@ -1,7 +1,6 @@
-<script type="text/javascript">
-  window.Config = {$config|default=""|raw|json_encode};
-</script>
-<script src="__CDN__/static/admin/js/lang.js"></script>
+<!-- 加载语言函数 -->
+{include file="common/loadlang" /}
+
 <link
   href="__CDN__/static/admin/css/dashboard.min.css"
   rel="stylesheet"
@@ -183,7 +182,7 @@
 </div>
 
 <script type="text/javascript">
-  const Dashboard = {
+  var Dashboard = {
     setup() {
       const {
         CSSProperties,
@@ -199,7 +198,6 @@
       const {Local}=Storage
       const WORKING_TIME = 'workingTime'
       const d = new Date()
-      const navTabs = useNavTabs();
       const adminInfo = useAdminInfo();
       const config = useConfig();
 
@@ -374,13 +372,6 @@
         clearInterval(workTimer);
         window.removeEventListener('resize', echartsResize);
       });
-
-      watch(
-        () => navTabs.state.tabFullScreen,
-        () => {
-          echartsResize();
-        }
-      );
 
       return {
         config,

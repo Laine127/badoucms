@@ -1,0 +1,162 @@
+.w100 {
+  width: 100%;
+}
+
+.ba-upload {
+  display: inline-block;
+  width: 100%;
+}
+
+.ba-upload-select-image {
+  position: absolute;
+  top: 0px;
+  border: 1px dashed var(--el-border-color);
+  border-top: 1px dashed transparent;
+  width: 148px;
+  height: 30px;
+  line-height: 30px;
+  border-radius: 6px;
+  border-bottom-right-radius: 20px;
+  border-bottom-left-radius: 20px;
+  text-align: center;
+  font-size: 12px;
+  color: #606266;
+  user-select: none;
+}
+
+.ba-upload-select-image:hover {
+  color: #409eff;
+  border: 1px dashed #409eff;
+  border-top: 1px dashed #409eff;
+}
+
+.ba-upload .ba-upload-icon:hover {
+  color: #409eff !important;
+}
+
+.ba-upload-preview .el-dialog__body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  height: auto;
+}
+
+.ba-upload-preview-scroll {
+  max-height: 70vh;
+  overflow: auto;
+}
+
+.ba-upload-preview-img {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.el-dialog__headerbtn {
+  top: 2px;
+  width: 37px;
+  height: 37px;
+}
+
+.ba-upload.image .el-upload--picture-card,
+.ba-upload.images .el-upload--picture-card {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ba-upload.file .el-upload-list,
+.ba-upload.files .el-upload-list {
+  margin-left: -10px;
+}
+
+.ba-upload.files .el-upload-list__item,
+.ba-upload.images .el-upload-list__item {
+  user-select: none;
+}
+
+.ba-upload.files .el-upload-list__item .el-upload-list__item-actions,
+.ba-upload.files .el-upload-list__item .el-upload-list__item-name,
+.ba-upload.images .el-upload-list__item .el-upload-list__item-actions,
+.ba-upload.images .el-upload-list__item .el-upload-list__item-name {
+  cursor: move;
+}
+
+.ml-6 {
+  margin-left: 6px;
+}
+
+.ba-upload.hide-image-plus .el-upload--picture-card {
+  display: none;
+}
+
+.ba-upload.is-disabled .el-upload,
+.ba-upload.is-disabled .el-upload .el-button,
+.ba-upload.is-disabled .el-upload--picture-card {
+  cursor: not-allowed;
+}
+
+/* Element Plus 基础样式补充 */
+.el-upload-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.el-upload-list__item {
+  position: relative;
+  margin-top: 5px;
+  background-color: #fff;
+  border: 1px solid #c0ccda;
+  border-radius: 6px;
+  box-sizing: border-box;
+  width: 148px;
+  height: 148px;
+  overflow: hidden;
+}
+
+.el-upload-list__item-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.el-upload-list__item-status-label {
+  position: absolute;
+  right: -15px;
+  top: -6px;
+  width: 40px;
+  height: 24px;
+  background: #13ce66;
+  text-align: center;
+  transform: rotate(45deg);
+  box-shadow: 0 0 1pc 1px rgba(0, 0, 0, 0.2);
+}
+
+.el-upload-list__item-status-label i {
+  font-size: 12px;
+  margin-top: 11px;
+  color: #fff;
+  transform: rotate(-45deg);
+}
+
+.el-upload-list__item-name {
+  display: none;
+}
+
+.el-upload-list__item .el-icon-close,
+.el-upload-list__item .el-icon-zoom-in {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  cursor: pointer;
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  padding: 5px;
+}
+
+.el-upload-list__item .el-icon-zoom-in {
+  right: 32px;
+}

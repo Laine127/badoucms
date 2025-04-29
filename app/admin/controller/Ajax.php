@@ -70,7 +70,7 @@ class Ajax extends Backend
             $this->error($e->getMessage());
         }
 
-        $this->success(__('File uploaded successfully'), '', [
+        $this->success(__('File uploaded successfully'), [
             'file' => $attachment ?? []
         ]);
     }

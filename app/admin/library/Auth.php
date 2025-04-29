@@ -18,7 +18,7 @@ use app\admin\model\AdminGroup;
  * @property string $email      管理员邮箱
  * @property string $mobile     管理员手机号
  */
-class Auth extends \ba\Auth
+class Auth extends \bd\Auth
 {
     /**
      * 需要登录时/无需登录时的响应状态代码

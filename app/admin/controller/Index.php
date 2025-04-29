@@ -23,7 +23,7 @@ class Index extends Backend
      */
     public function index()
     {
-        if (!$this->request->isAjax()) {
+        if ($this->isView) {
             return $this->view->fetch();
         }
         $adminInfo          = $this->auth->getInfo();
@@ -34,7 +34,82 @@ class Index extends Backend
         if (!$menus) {
             $this->error(__('No background menu, please contact super administrator!'));
         }
-        $this->success('ok', '', ['menus' => $menus]);
+        return response($menus, 200, [], 'json');
+    }
+
+    public function adminConfig()
+    {
+        $adminConfig = [
+            "logo" => [
+                "title" => "BADOUCMS",
+                "image" => "/static/admin/images/logo.png"
+            ],
+            "menu" => [
+                "data" => "/admin/index/index",
+                "method" => "GET",
+                "accordion" => true,
+                "collapse" => false,
+                "control" => false,
+                "controlWidth" => 500,
+                "select" => "10",
+                "async" => true
+            ],
+            "tab" => [
+                "enable" => true,
+                "keepState" => true,
+                "session" => true,
+                "preload" => false,
+                "max" => "30",
+                "index" => [
+                    "id" => "1",
+                    "href" => "/admin/dashboard/index?view=1",
+                    "title" => "首页"
+                ]
+            ],
+            "theme" => [
+                "defaultColor" => "2",
+                "defaultMenu" => "dark-theme",
+                "defaultHeader" => "light-theme",
+                "allowCustom" => true,
+                "banner" => false
+            ],
+            "colors" => [
+                [
+                    "id" => "1",
+                    "color" => "#2d8cf0",
+                    "second" => "#ecf5ff"
+                ],
+                [
+                    "id" => "2",
+                    "color" => "#36b368",
+                    "second" => "#f0f9eb"
+                ],
+                [
+                    "id" => "3",
+                    "color" => "#f6ad55",
+                    "second" => "#fdf6ec"
+                ],
+                [
+                    "id" => "4",
+                    "color" => "#f56c6c",
+                    "second" => "#fef0f0"
+                ],
+                [
+                    "id" => "5",
+                    "color" => "#3963bc",
+                    "second" => "#ecf5ff"
+                ]
+            ],
+            "other" => [
+                "keepLoad" => "1200",
+                "autoHead" => false,
+                "footer" => false
+            ],
+            "header" => [
+                "message" => "admin/data/message.json"
+            ]
+        ];
+        return response($adminConfig, 200, [], 'json');
     }
 
     /**
@@ -88,8 +163,9 @@ class Index extends Backend
 
             $res = $this->auth->login($username, $password, (bool)$keep);
             if ($res === true) {
-                $this->success(__('Login succeeded!'), $url, [
-                    'userInfo' => $this->auth->getInfo()
+                $this->success(__('Login succeeded!'), [
+                    'userInfo' => $this->auth->getInfo(),
+                    'url'      => $url,
                 ]);
             } else {
                 $msg = $this->auth->getError();
@@ -97,10 +173,6 @@ class Index extends Backend
                 $this->error($msg);
             }
         }
-
-        // $this->success('', '', [
-        //     'captcha' => $captchaSwitch
-        // ]);
 
         $this->view->assign('title', __('Login'));
         return $this->view->fetch();

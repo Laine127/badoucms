@@ -1,31 +1,4 @@
 {extend name="common/layout" /}
 {block name="main"}
-    <div id="main-warpper">
 
-    </div>
-
-    <script data-render="script">
-        const page = new Page();
-
-        // 获取初始hash
-        const getPageUrl = () => {
-            const hash = window.location.hash.slice(1); // 移除 # 号
-            return hash ? Config.app_url + hash : Config.app_url + '/dashboard';
-        };
-
-        // 初始化页面
-        page.render({
-            elem: 'main-warpper',
-            url: getPageUrl(),
-            type: 'ajax'
-        });
-
-        // 监听 hash 变化
-        window.addEventListener('hashchange', () => {
-            page.changePage({
-                href: getPageUrl(),
-                type: 'ajax'
-            });
-        });
-    </script>
 {/block}

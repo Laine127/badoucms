@@ -1,0 +1,166 @@
+(function (root, factory) {
+    if (typeof define === 'function' && define.amd) {
+        // AMD
+        define(['vue'], factory);
+    } else if (typeof exports === 'object') {
+        // CommonJS
+        module.exports = factory(require('vue'));
+    } else {
+        // Browser globals
+        root.baInput = factory(root.Vue);
+    }
+}(typeof self !== 'undefined' ? self : this, function (Vue) {
+    'use strict';
+
+    /**
+     * 支持的输入框类型
+     */
+    const inputTypes = [
+        'string',
+        'password',
+        'number',
+        'radio',
+        'checkbox',
+        'switch',
+        'textarea',
+        'array',
+        'datetime',
+        'year',
+        'date',
+        'time',
+        'select',
+        'selects',
+        'remoteSelect',
+        'remoteSelects',
+        'editor',
+        'city',
+        'image',
+        'images',
+        'file',
+        'files',
+        'icon',
+        'color',
+    ];
+
+    /**
+     * input可用属性,用于代码提示,渲染不同输入组件时,需要的属性是不一样的
+     * https://element-plus.org/zh-CN/component/input.html#input-属性
+     */
+    const InputAttr = {
+        id: '',
+        name: '',
+        type: '',
+        placeholder: '',
+        maxlength: '',
+        minlength: '',
+        showWordLimit: false,
+        clearable: false,
+        showPassword: false,
+        disabled: false,
+        size: 'default',
+        prefixIcon: null,
+        suffixIcon: null,
+        rows: null,
+        border: false,
+        autosize: false,
+        autocomplete: '',
+        readonly: false,
+        max: null,
+        min: null,
+        step: null,
+        resize: null,
+        autofocus: false,
+        form: '',
+        label: '',
+        tabindex: null,
+        validateEvent: true,
+        inputStyle: null,
+        activeValue: null,
+        inactiveValue: null,
+        editable: true,
+        startPlaceholder: '',
+        endPlaceholder: '',
+        timeArrowControl: false,
+        format: '',
+        popperClass: '',
+        rangeSeparator: '',
+        defaultValue: null,
+        defaultTime: null,
+        valueFormat: '',
+        unlinkPanels: false,
+        clearIcon: null,
+        shortcuts: [],
+        disabledDate: null,
+        cellClassName: null,
+        teleported: false,
+        multiple: false,
+        valueKey: '',
+        collapseTags: '',
+        collapseTagsTooltip: false,
+        multipleLimit: 0,
+        effect: 'light',
+        filterable: false,
+        allowCreate: false,
+        filterMethod: null,
+        remote: false,
+        remoteMethod: false,
+        labelFormatter: null,
+        noMatchText: '',
+        noDataText: '',
+        reserveKeyword: false,
+        defaultFirstOption: false,
+        popperAppendToBody: false,
+        persistent: false,
+        automaticDropdown: false,
+        fitInputWidth: false,
+        tagType: 'info',
+        params: null,
+        pk: '',
+        field: '',
+        remoteUrl: '',
+        tooltipParams: null,
+        escBlur: false,
+        showIconName: false,
+        placement: '',
+        title: '',
+        showAlpha: false,
+        colorFormat: '',
+        predefine: [],
+        action: '',
+        headers: null,
+        method: '',
+        data: null,
+        withCredentials: false,
+        showFileList: true,
+        drag: false,
+        accept: '',
+        listType: '',
+        autoUpload: true,
+        limit: 0,
+        hideSelectFile: false,
+        returnFullUrl: false,
+        forceLocal: false,
+        hideImagePlusOnOverLimit: false,
+        height: '',
+        mode: '',
+        editorStyle: null,
+        style: null,
+        toolbarConfig: null,
+        editorConfig: null,
+        editorType: '',
+        preview: false,
+        language: '',
+        theme: 'light',
+        toolbarsExclude: [],
+        fileForceLocal: false,
+        keyTitle: '',
+        valueTitle: '',
+        dataType: '',
+        button: false
+    };
+
+    return {
+        inputTypes,
+        InputAttr
+    };
+}));

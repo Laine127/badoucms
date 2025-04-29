@@ -53,7 +53,7 @@ class Dashboard extends Backend
                 ->find();
         }
 
-        $this->success('', '', [
+        $this->success('', [
             'remark' => get_route_remark(),
             'server' => $server,
             'counts' => $counts,

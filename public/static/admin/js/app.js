@@ -1,3 +1,5 @@
+
+
 /**
  * 创建应用
  * @param {*} id            Dom id
@@ -19,6 +21,15 @@ function createVue(id, Index, components) {
             app.component(key, component)
         }
     }
+
+    // 注册blur指令
+    app.directive('blur', {
+        mounted(el) {
+            el.addEventListener('focus', function () {
+                this.blur();
+            });
+        }
+    });
     app.mount(`#${id}`)
 }
 
@@ -131,7 +142,5 @@ function getGreet() {
     } else {
         greet = __('Hello!') + __('welcome back')
     }
-    console.log(greet);
-
     return greet
 }

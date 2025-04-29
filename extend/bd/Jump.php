@@ -11,75 +11,48 @@ trait Jump
      * 操作成功跳转的快捷方法
      * @access protected
      * @param  mixed $msg 提示信息
-     * @param  string $url 跳转的URL地址
-     * @param  mixed $data 返回的数据
-     * @param  integer $wait 跳转等待时间
+     * @param  mixed $data 跳转的URL地址
+     * @param  integer $code 返回code
      * @param  array $header 发送的Header信息
      * @return void
      */
-    protected function success($msg = '', ?string $url = null, $data = '', int $wait = 3, array $header = [])
+    protected function success($msg = '', mixed $data = '', int $code = 1, ?string $type = null, array $header = [], array $options = [])
     {
-        if (is_null($url) && isset($_SERVER["HTTP_REFERER"])) {
-            $url = $_SERVER["HTTP_REFERER"];
-        } elseif ($url) {
-            $url = (strpos($url, '://') || 0 === strpos($url, '/')) ? $url : (string)$this->app->route->buildUrl($url);
-        }
+        $result = $this->prepareResult($msg, $data, $code);
 
-        $result = [
-            'code' => 1,
-            'msg' => $msg,
-            'data' => $data,
-            'url' => $url,
-            'tourl' => $url,
-            'wait' => $wait,
-        ];
-
-        $type = $this->getResponseType();
         // 把跳转模板的渲染下沉，这样在 response_send 行为里通过getData()获得的数据是一致性的格式
-        if ('html' == strtolower($type)) {
+        if ($this->isView) {
             $type = 'view';
             $response = Response::create($this->app->config->get('jump.dispatch_success_tmpl'), $type)->assign($result)->header($header);
         } else {
+            $type = 'json';
             $response = Response::create($result, $type)->header($header);
         }
 
         throw new HttpResponseException($response);
     }
 
+
     /**
      * 操作错误跳转的快捷方法
      * @access protected
      * @param  mixed $msg 提示信息
-     * @param  string $url 跳转的URL地址
-     * @param  mixed $data 返回的数据
+     * @param  mixed $data 跳转的URL地址
+     * @param  mixed $code 状态码
+     * @param string $type 返回数据格式
      * @param  integer $wait 跳转等待时间
      * @param  array $header 发送的Header信息
      * @return void
      */
-    protected function error($msg = '', ?string $url = null, $data = '', int $wait = 3, array $header = [])
+    protected function error($msg = '', mixed $data = '', int $code = 0, ?string $type = null, array $header = [], array $options = [])
     {
-        if (is_null($url)) {
-            $url = $this->request->isAjax() ? '' : 'javascript:history.back(-1);';
-        } elseif ($url) {
-            $url = (strpos($url, '://') || 0 === strpos($url, '/')) ? $url : (string)$this->app->route->buildUrl($url);
-        }
+        $result = $this->prepareResult($msg, $data, $code);
 
-        $result = [
-            'code' => 0,
-            'msg' => $msg,
-            'data' => $data,
-            'url' => $url,
-            'tourl' => $url,
-            'wait' => $wait,
-        ];
-
-        $type = $this->getResponseType();
-
-        if ('html' == strtolower($type)) {
+        if ($this->isView) {
             $type = 'view';
             $response = Response::create($this->app->config->get('jump.dispatch_error_tmpl'), $type)->assign($result)->header($header);
         } else {
-            $response = Response::create($result, $type)->header($header);
+            $response = Response::create($result, 'json')->header($header);
         }
 
         throw new HttpResponseException($response);
@@ -129,12 +102,40 @@ trait Jump
     }
 
     /**
-     * 获取当前的response 输出类型
-     * @access protected
-     * @return string
+     * 准备通用响应数据
      */
-    protected function getResponseType()
+    private function prepareResult($msg, &$url, $code)
     {
-        return $this->request->isJson() || $this->request->isAjax() ? 'json' : 'html';
+        $wait = 3;
+        $data = []; // 初始化变量
+
+        if (is_array($url)) {
+            $data = $url;
+            if (isset($data['url'])) {
+                $url = $data['url'];
+                unset($data['url']);
+            }
+            if (isset($data['wait'])) {
+                $wait = $data['wait'];
+                unset($data['wait']);
+            }
+        }
+
+        if (is_null($url) && isset($_SERVER["HTTP_REFERER"])) {
+            $url = $_SERVER["HTTP_REFERER"];
+        } elseif ($url && is_string($url)) { // 增加类型检查
+            $url = (strpos($url, '://') !== false || strpos($url, '/') === 0)
+                ? $url
+                : (string)$this->app->route->buildUrl($url);
+        }
+
+        return [
+            'code' => $code,
+            'msg' => $msg,
+            'data' => $data, // 确保变量已定义
+            'url' => $url,
+            'tourl' => $url,
+            'wait' => $wait,
+        ];
     }
 }

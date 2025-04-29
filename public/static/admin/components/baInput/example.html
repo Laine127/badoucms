@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BaInput 组件示例</title>
+    <!-- 引入依赖 -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+    <script src="https://unpkg.com/element-plus"></script>
+    <link rel="stylesheet" href="https://unpkg.com/element-plus/dist/index.css">
+    <!-- 引入组件 -->
+    <script src="./baInput.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div style="max-width: 600px; margin: 20px auto;">
+            <h2>BaInput 组件示例</h2>
+
+            <!-- 文本输入框 -->
+            <div class="demo-item">
+                <h3>文本输入框</h3>
+                <ba-input
+                    type="string"
+                    v-model="formData.text"
+                    :attr="{placeholder: '请输入文本'}"
+                ></ba-input>
+                <p>输入的值: {{ formData.text }}</p>
+            </div>
+
+            <!-- 数字输入框 -->
+            <div class="demo-item">
+                <h3>数字输入框</h3>
+                <ba-input
+                    type="number"
+                    v-model="formData.number"
+                    :attr="{placeholder: '请输入数字'}"
+                ></ba-input>
+                <p>输入的值: {{ formData.number }}</p>
+            </div>
+
+            <!-- 单选框 -->
+            <div class="demo-item">
+                <h3>单选框</h3>
+                <ba-input
+                    type="radio"
+                    v-model="formData.radio"
+                    :data="{content: {1: '选项1', 2: '选项2', 3: '选项3'}}"
+                ></ba-input>
+                <p>选择的值: {{ formData.radio }}</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+        const app = createApp({
+            data() {
+                return {
+                    formData: {
+                        text: '',
+                        number: '',
+                        radio: ''
+                    }
+                }
+            }
+        });
+
+        app.component('ba-input', BaInput);
+        app.use(ElementPlus);
+        app.mount('#app');
+    </script>
+
+    <style>
+        .demo-item {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+        }
+        .demo-item h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+    </style>
+</body>
+</html>
