@@ -9,21 +9,6 @@ return [
     'Continue to work' => '继续工作',
     'have a bit of rest' => '休息片刻',
 
-    // 统计数据
-    'Member registration' => '会员注册量',
-    'Total number of members' => '会员总数',
-    'Number of installed plug-ins' => '已装插件数',
-    'Membership growth' => '会员增长情况',
-    'Annex growth' => '附件增长情况',
-    'Number of attachments Uploaded' => '附件上传量',
-
-    // 会员相关
-    'New member' => '刚刚加入的会员',
-    'Joined us' => '加入了我们',
-    'Member source' => '会员来源',
-    'Member last name' => '会员姓氏',
-    'full name' => '姓名',
-
     // 状态和加载
     'Loading' => '加载中...',
 
@@ -36,26 +21,10 @@ return [
     'Saturday' => '周六',
     'Sunday' => '周日',
 
-    // 统计指标
-    'Visits' => '访问量',
-    'Registration volume' => '注册量',
-
     // 文件类型
     'picture' => '图片',
     'file' => '文档',
     'table' => '表格',
     'other' => '其它',
     'Compressed package' => '压缩包',
-
-    // 来源渠道
-    'Baidu' => '百度',
-    'Direct access' => '直接访问',
-    'take a plane' => '坐飞机',
-    'Take the high-speed railway' => '坐高铁',
-
-    // 时间单位
-    'hour' => '小时',
-    'minute' => '分',
-    'second' => '秒',
-    'day' => '天',
 ];

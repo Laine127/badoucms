@@ -199,6 +199,103 @@
   }
 }
 
+.table-header {
+  position: relative;
+  overflow-x: auto;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  background-color: var(--ba-bg-color-overlay);
+  border: 1px solid var(--ba-border-color);
+  border-bottom: none;
+  padding: 13px 15px;
+  font-size: 14px;
+}
+.table-header-operate-text {
+  margin-left: 6px;
+}
+.mlr-12 {
+  margin-left: 12px;
+}
+.mlr-12 + .el-button {
+  margin-left: 12px;
+}
+.table-search {
+  display: flex;
+  margin-left: auto;
+}
+.table-search .quick-search {
+  width: auto;
+}
+.table-search-button-group {
+  display: flex;
+  margin-left: 12px;
+  border: 1px solid var(--el-border-color);
+  border-radius: var(--el-border-radius-base);
+  overflow: hidden;
+}
+.table-search-button-group button:focus,
+.table-search-button-group button:active {
+  background-color: var(--ba-bg-color-overlay);
+}
+.table-search-button-group button:hover {
+  background-color: var(--el-color-info-light-7);
+}
+.table-search-button-item {
+  height: 30px;
+  border: none;
+  border-radius: 0;
+}
+.table-search-button-group .el-button + .el-button {
+  margin: 0;
+}
+.right-border {
+  border-right: 1px solid var(--el-border-color);
+}
+html.dark .table-search-button-group button:focus,
+html.dark .table-search-button-group button:active {
+  background-color: var(--el-color-info-dark-2);
+}
+html.dark .table-search-button-group button:hover {
+  background-color: var(--el-color-info-light-7);
+}
+html.dark .table-search-button-group button {
+  background-color: var(--ba-bg-color-overlay);
+}
+html.dark .table-search-button-group button el-icon {
+  color: white !important;
+}
+
+.ba-table-render-buttons-item {
+  padding: 4px 5px;
+  height: auto;
+}
+.ba-table-render-buttons-item .icon {
+  font-size: 14px !important;
+  color: var(--ba-bg-color-overlay) !important;
+}
+.ba-table-render-buttons-item .text {
+  padding-left: 5px;
+}
+.ba-table-render-buttons-move {
+  cursor: move;
+}
+.ml-6 {
+  display: inline-flex;
+  vertical-align: middle;
+  margin-left: 6px;
+}
+.ml-6 + .el-button {
+  margin-left: 6px;
+}
+
+.ba-table-render-color {
+  height: 25px;
+  width: 100%;
+}
+
 .el-menu {
   .el-sub-menu .el-menu {
     background-color: #191a1f !important;

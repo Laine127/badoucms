@@ -25,7 +25,7 @@
         props: {
             name: {
                 type: String,
-                required: true
+                default: ''
             },
             size: {
                 type: String,
@@ -37,17 +37,37 @@
             }
         },
         setup(props) {
-            // SVG 组件的具体实现
-            // 这里需要根据您的实际 SVG 组件逻辑来实现
-            return () => createVNode('svg', {
-                class: 'svg-icon',
-                style: {
-                    width: props.size,
-                    height: props.size,
-                    color: props.color
-                }
+            const s = `${props.size.replace('px', '')}px`;
+            const iconName = computed(() => `#${props.name}`);
+            const iconStyle = computed(() => {
+                return {
+                    color: props.color,
+                    fontSize: s,
+                };
             });
-        }
+
+            const isUrl = computed(() => isExternal(props.name));
+            const urlIconStyle = computed(() => {
+                return {
+                    width: s,
+                    height: s,
+                    mask: `url(${props.name}) no-repeat 50% 50%`,
+                    '-webkit-mask': `url(${props.name}) no-repeat 50% 50%`,
+                };
+            });
+            return {
+                iconName,
+                iconStyle,
+                isUrl,
+                urlIconStyle
+            };
+        },
+        template: `
+            <div v-if="isUrl" :style="urlIconStyle" class="url-svg svg-icon icon"></div>
+            <svg v-else class="svg-icon icon" :style="iconStyle">
+                <use :href="iconName" />
+            </svg>
+        `
     };
 
     // Icon 组件定义

@@ -85,7 +85,12 @@
             const tableRef = ref(null);
             const baTable = inject('baTable')
 
-            const fieldRenderer = {};
+            const fieldRenderer = {
+                datetime: 'datetime',
+                switch: 'switch',
+                icon: IconRenderer,
+                buttons: ButtonsRenderer
+            };
 
             const getRenderKey = (key, item, scope) => {
                 if (item.getRenderKey && typeof item.getRenderKey == 'function') {

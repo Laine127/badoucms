@@ -68,6 +68,7 @@ class Rule extends Backend
 
     public function index()
     {
+        // p($this->request->controller());
         if ($this->isView) {
             return $this->view->fetch();
         }

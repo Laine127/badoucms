@@ -6,8 +6,7 @@
 })();
 window.Lang = Config.lang;
 function lang(data) {
-    // 使用 Vue.reactive 使数据具有响应性
-    window.Lang = Vue.reactive(data);
+    window.Lang = data
 }
 
 function __() {
@@ -21,12 +20,10 @@ function __() {
 function translateText(string, args) {
     // 获取翻译文本
     let translatedText = window.Lang?.[string] || args[0];
-
     // 如果翻译结果是对象,返回原始文本
     if (typeof translatedText === 'object') {
         return args[0];
     }
-
     // 处理参数替换
     return translatedText.replace(/%((%)|s|d)/g, (m, p1, p2) => {
         if (p2) return '%';

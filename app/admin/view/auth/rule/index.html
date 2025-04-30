@@ -1,10 +1,14 @@
 {include file="common/loadlang" /}
 
 <div class="default-main" id="rule" v-cloak>
+    <!-- 表格 -->
+    <table-header
+        :buttons="['refresh', 'add', 'edit', 'delete', 'unfold', 'quickSearch', 'columnDisplay']"
+        :quick-search-placeholder="__('Quick search placeholder', __('title'))"
+    ></table-header>
 
-  <!-- 表格 -->
-  <!-- 要使用`el-table`组件原有的属性，直接加在Table标签上即可 -->
-  <table-component ref="tableRef" :pagination="false" />
+    <!-- 要使用`el-table`组件原有的属性，直接加在Table标签上即可 -->
+    <table-component ref="tableRef" :pagination="false" ></table-component>
 </div>
 <script>
   var Rule = {
@@ -12,6 +16,7 @@
       const { ref,onMounted,provide } = Vue;
       const tableRef = ref(null);
       const {defaultOptButtons}= tableUtils;
+
       const baTable = new baTableClass(
         new baTableApi("/auth.rule/"),
         {
@@ -110,7 +115,6 @@
 
       onMounted(() => {
         baTable.table.ref = tableRef.value;
-        console.log('Table ref after nextTick:', tableRef.value);
 
         baTable.mount();
         baTable.getIndex()?.then(() => {
@@ -127,6 +131,10 @@
     "table-header": TableHeader,
     'table-component': TableComponent,
     'com-search': ComSearch,
-    'ba-input':BaInput
+    'ba-input':BaInput,
+    'datetime':Datetime,
+    'switch':Switch,
+   'icon':IconRenderer,
+   'buttons':ButtonsRenderer,
   });
 </script>

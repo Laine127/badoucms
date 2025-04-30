@@ -1,5 +1,3 @@
-
-
 /**
  * 创建应用
  * @param {*} id            Dom id
@@ -14,7 +12,7 @@ function createVue(id, Index, components) {
     for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
         app.component(key, component)
     }
-    app.component('Svg', Svg);
+    // app.component('Svg', Svg);
     app.component('Icon', Icon);
     if (components) {
         for (const [key, component] of Object.entries(components)) {
@@ -143,4 +141,52 @@ function getGreet() {
         greet = __('Hello!') + __('welcome back')
     }
     return greet
+}
+
+/**
+ * 格式化时间戳
+ * @param dateTime 时间戳
+ * @param fmt 格式化方式，默认：yyyy-mm-dd hh:MM:ss
+ */
+function timeFormat(dateTime = null, fmt = 'yyyy-mm-dd hh:MM:ss') {
+    if (dateTime == 'none') return __('None')
+    if (!dateTime) dateTime = Number(new Date())
+    if (dateTime.toString().length === 10) {
+        dateTime = +dateTime * 1000
+    }
+
+    const date = new Date(dateTime)
+    let ret
+    const opt = {
+        'y+': date.getFullYear().toString(), // 年
+        'm+': (date.getMonth() + 1).toString(), // 月
+        'd+': date.getDate().toString(), // 日
+        'h+': date.getHours().toString(), // 时
+        'M+': date.getMinutes().toString(), // 分
+        's+': date.getSeconds().toString(), // 秒
+    }
+    for (const k in opt) {
+        ret = new RegExp('(' + k + ')').exec(fmt)
+        if (ret) {
+            fmt = fmt.replace(ret[1], ret[1].length == 1 ? opt[k] : padStart(opt[k], ret[1].length, '0'))
+        }
+    }
+    return fmt
+}
+
+/**
+ * 字符串补位
+ */
+function padStart(str, maxLength, fillString = ' ') {
+    if (str.length >= maxLength) return str
+
+    const fillLength = maxLength - str.length
+    let times = Math.ceil(fillLength / fillString.length)
+    while ((times >>= 1)) {
+        fillString += fillString
+        if (times === 1) {
+            fillString += fillString
+        }
+    }
+    return fillString.slice(0, fillLength) + str
 }

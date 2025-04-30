@@ -1,4 +1,4 @@
-(function(root, factory) {
+(function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD
         define(['vue', 'element-plus'], factory);
@@ -9,14 +9,14 @@
         // Browser globals (root is window)
         root.tableUtils = factory(root.Vue, root.ElementPlus);
     }
-}(typeof self !== 'undefined' ? self : this, function(Vue, ElementPlus) {
+}(typeof self !== 'undefined' ? self : this, function (Vue, ElementPlus) {
     'use strict';
 
     /**
      * 获取单元格值
      */
     const getCellValue = (row, field, column, index) => {
-        if (!field.prop) return '';
+        if (!field || !field.prop) return '';
 
         const prop = field.prop;
         let cellValue = row[prop];
