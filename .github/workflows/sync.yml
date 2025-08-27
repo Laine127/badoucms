@@ -1,0 +1,29 @@
+name: Sync Gitee to GitHub
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout GitHub
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 添加 Gitee 远程仓库并同步
+        run: |
+          # 添加 Gitee 源仓库（无需密钥，公开仓库直接访问）
+          git remote add gitee https://gitee.com/lande_admin/badoucms.git || true
+          # 拉取 Gitee 所有分支、标签（强制覆盖本地跟踪信息）
+          git fetch --force gitee
+          # 删除本地 refs/pull/ 引用（避免推送时被远程拒绝）
+          git for-each-ref --format='%(refname)' refs/pull/ | xargs -n 1 git update-ref -d || true
+          # 镜像推送到 GitHub（origin 是默认的 GitHub 远程仓库）
+          git push --mirror origin
