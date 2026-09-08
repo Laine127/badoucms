@@ -1029,6 +1029,34 @@ class Content extends Model
     }
 
     /**
+     * 获取指定栏目和语言的公开内容，供 llms.txt 生成器使用。
+     */
+    public function getLlmsSortContent(string $scode, string $language): array
+    {
+        $contents = $this->alias('a')
+            ->join('cms_content_sort b', 'a.scode=b.scode AND a.acode=b.acode', 'LEFT')
+            ->join('cms_model c', 'b.mcode=c.mcode', 'LEFT')
+            ->where([
+                ['a.status', '=', 1],
+                ['a.acode', '=', $language],
+                ['c.type', '=', 2],
+                ['a.date', '<', date('Y-m-d H:i:s')],
+                ['a.scode', '=', $scode],
+                ['b.acode', '=', $language],
+                ['b.status', '=', 1],
+            ])
+            ->field([
+                'a.id', 'a.acode', 'a.scode', 'a.title', 'a.description', 'a.filename', 'a.outlink',
+                'b.filename AS sortfilename', 'c.type', 'c.urlname',
+            ])
+            ->order('a.sorting,a.id DESC')
+            ->cache('__CACHE_CMS_LLMS_CONTENT_' . $language . '_' . $scode, 3600, 'cms_cache')
+            ->select();
+
+        return $contents->isEmpty() ? [] : $contents->toArray();
+    }
+
+    /**
      * 搜索列表
      * @param mixed $params
      * @return array

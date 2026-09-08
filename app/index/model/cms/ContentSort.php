@@ -423,6 +423,26 @@ class ContentSort extends Model
         return $sorts->toArray();
     }
 
+    /**
+     * 获取指定语言可公开收录的栏目，供 llms.txt 生成器使用。
+     */
+    public function getLlmsSortList(string $language): array
+    {
+        $sorts = $this->alias('a')
+            ->join('cms_model b', 'a.mcode=b.mcode', 'LEFT')
+            ->where('a.acode', $language)
+            ->where('a.status', 1)
+            ->field([
+                'a.acode', 'a.scode', 'a.name', 'a.filename', 'a.description', 'a.outlink',
+                'b.type', 'b.urlname',
+            ])
+            ->order('a.pcode,a.sorting,a.id desc')
+            ->cache('__CACHE_CMS_LLMS_SORTS_' . $language, 3600, 'cms_cache')
+            ->select();
+
+        return $sorts->isEmpty() ? [] : $sorts->toArray();
+    }
+
     // 获取分类名称
     public function getSortName($scode): mixed
     {

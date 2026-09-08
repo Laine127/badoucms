@@ -3,3 +3,4 @@ Disallow:
 
 Sitemap: /sitemap.xml
 Sitemap: /sitemap.txt
+LLMs-Txt: /llms.txt

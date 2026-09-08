@@ -21,8 +21,13 @@ class Site extends Model
 
     public function getSiteData()
     {
-        $lg = get_frontend_lang();
-        $info = $this->where('acode', $lg)->cache('cms_site_'.$lg, 3600 * 24, 'cms_cache')->find();
+        return $this->getSiteDataByLanguage(get_frontend_lang());
+    }
+
+    public function getSiteDataByLanguage(string $language): array
+    {
+        $language = trim($language);
+        $info = $this->where('acode', $language)->cache('cms_site_' . $language, 3600 * 24, 'cms_cache')->find();
         $data = [];
         if (!$info) {
             $columns = TableManager::getTableColumns('cms_site', false, 'mysql');

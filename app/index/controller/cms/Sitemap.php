@@ -15,6 +15,7 @@ namespace app\index\controller\cms;
 use app\index\model\cms\Area;
 use app\index\model\cms\ContentSort;
 use app\index\model\cms\Content;
+use app\index\model\cms\Site;
 use think\Response;
 
 class Sitemap extends Base
@@ -170,6 +171,156 @@ class Sitemap extends Base
         }
 
         return rtrim($domain, '/');
+    }
+
+    /**
+     * 输出 llms.txt Markdown 索引。
+     *
+     * 无语言参数时输出所有启用语言的索引入口；指定 language 参数，或在配置了
+     * 独立语言域名时访问时，输出该语言的站点、栏目和公开内容。
+     */
+    public function llms(): Response
+    {
+        $areas = $this->getAreas(get_frontend_lang());
+        $language = trim((string) $this->request->param('language', ''));
+        if ($language !== '') {
+            if (!isset($areas[$language])) {
+                return response('Not Found', 404, ['Content-Type' => 'text/plain; charset=UTF-8']);
+            }
+            return $this->plainTextResponse($this->llmsLanguage($language, $areas[$language]));
+        }
+
+        $domainLanguage = $this->domainLanguage($areas);
+        if ($domainLanguage !== '') {
+            return $this->plainTextResponse($this->llmsLanguage($domainLanguage, $areas[$domainLanguage]));
+        }
+
+        return $this->plainTextResponse($this->llmsIndex($areas));
+    }
+
+    private function llmsIndex(array $areas): string
+    {
+        $defaultLanguage = trim(get_default_lang());
+        $defaultSite = (new Site())->getSiteDataByLanguage($defaultLanguage);
+        $name = $this->plainText($defaultSite['sitetitle'] ?? '') ?: 'Website';
+        $description = $this->plainText($defaultSite['sitedescription'] ?? '');
+        $lines = ['# ' . $name];
+        if ($description !== '') {
+            $lines[] = '';
+            $lines[] = '> ' . $description;
+        }
+        $lines[] = '';
+        $lines[] = '## Languages';
+
+        foreach ($areas as $language => $area) {
+            $language = (string) ($area['acode'] ?? $language);
+            if ($language === '') {
+                continue;
+            }
+            $site = (new Site())->getSiteDataByLanguage($language);
+            $label = $this->plainText($area['name'] ?? '') ?: $language;
+            $summary = $this->plainText($site['sitedescription'] ?? '');
+            $url = $this->llmsUrl($language, $area);
+            $lines[] = '- [' . $label . '](' . $url . ')' . ($summary === '' ? '' : ': ' . $summary);
+        }
+
+        return implode("\n", $lines) . "\n";
+    }
+
+    private function llmsLanguage(string $language, array $area): string
+    {
+        $site = (new Site())->getSiteDataByLanguage($language);
+        $name = $this->plainText($site['sitetitle'] ?? '') ?: 'Website';
+        $description = $this->plainText($site['sitedescription'] ?? '');
+        $lines = ['# ' . $name];
+        if ($description !== '') {
+            $lines[] = '';
+            $lines[] = '> ' . $description;
+        }
+
+        $homeUrl = $this->buildUrl('', $language, $area, true);
+        $lines[] = '';
+        $lines[] = '## Website';
+        $lines[] = '- [' . $name . '](' . $homeUrl . ')' . ($description === '' ? '' : ': ' . $description);
+
+        $sortModel = new ContentSort();
+        $contentModel = new Content();
+        $sorts = $sortModel->getLlmsSortList($language);
+        $sortLines = [];
+        $contentLines = [];
+        foreach ($sorts as $sort) {
+            if (!empty($sort['outlink'])) {
+                continue;
+            }
+            $sortName = $this->plainText($sort['name'] ?? '');
+            $sortUrl = $this->buildUrl((string) ($sort['link'] ?? ''), $language, $area);
+            if ($sortName !== '' && $sortUrl !== '') {
+                $sortDescription = $this->plainText($sort['description'] ?? '');
+                $sortLines[] = '- [' . $sortName . '](' . $sortUrl . ')' . ($sortDescription === '' ? '' : ': ' . $sortDescription);
+            }
+            if ((int) ($sort['type'] ?? 0) === 1) {
+                continue;
+            }
+
+            foreach ($contentModel->getLlmsSortContent((string) $sort['scode'], $language) as $content) {
+                if (!empty($content['outlink'])) {
+                    continue;
+                }
+                $title = $this->plainText($content['title'] ?? '');
+                $url = $this->buildUrl((string) ($content['link'] ?? ''), $language, $area);
+                if ($title === '' || $url === '') {
+                    continue;
+                }
+                $contentDescription = $this->plainText($content['description'] ?? '');
+                $contentLines[] = '- [' . $title . '](' . $url . ')' . ($contentDescription === '' ? '' : ': ' . $contentDescription);
+            }
+        }
+
+        if ($sortLines !== []) {
+            $lines[] = '';
+            $lines[] = '## Sections';
+            array_push($lines, ...$sortLines);
+        }
+        if ($contentLines !== []) {
+            $lines[] = '';
+            $lines[] = '## Content';
+            array_push($lines, ...$contentLines);
+        }
+
+        return implode("\n", $lines) . "\n";
+    }
+
+    private function llmsUrl(string $language, array $area): string
+    {
+        return $this->getLanguageDomain($area) . '/llms-' . rawurlencode($language) . '.txt';
+    }
+
+    private function domainLanguage(array $areas): string
+    {
+        $host = strtolower($this->request->host());
+        foreach ($areas as $language => $area) {
+            $domain = strtolower((string) ($area['domain'] ?? ''));
+            $domain = preg_replace('#^https?://#', '', $domain) ?: '';
+            $domain = rtrim($domain, '/');
+            if ($domain !== '' && $domain === $host) {
+                return (string) ($area['acode'] ?? $language);
+            }
+        }
+        return '';
+    }
+
+    private function plainText($value): string
+    {
+        if (!is_scalar($value)) {
+            return '';
+        }
+        $value = html_entity_decode(strip_tags((string) $value), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        return trim((string) preg_replace('/\s+/u', ' ', $value));
+    }
+
+    private function plainTextResponse(string $content): Response
+    {
+        return response($content, 200, ['Content-Type' => 'text/plain; charset=UTF-8']);
     }
 
     // 文本格式
